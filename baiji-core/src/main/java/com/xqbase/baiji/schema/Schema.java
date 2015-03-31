@@ -48,4 +48,27 @@ public abstract class Schema {
     public PropertyMap getPropertyMap() {
         return propertyMap;
     }
+
+    /**
+     * The name of this schema. If this is a named schema such as an enum,
+     * it returns the fully qualified name for the schema.
+     * For other schemas, it returns the type of the schema.
+     *
+     * @return the qualified or type of the schema.
+     */
+    public abstract String getName();
+
+    /**
+     * Parses a JSON string to create a new schema object
+     *
+     * @param json JSON string
+     * @return a new Schema Object
+     */
+    public static Schema parse(String json) {
+        if (json == null || json.isEmpty()) {
+            throw new IllegalArgumentException("JSON string cannot be null or empty.");
+        }
+
+        return null;
+    }
 }
