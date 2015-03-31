@@ -32,4 +32,20 @@ public abstract class Schema {
         this.type = type;
         this.propertyMap = propertyMap;
     }
+
+    /**
+     * Get the type of the schema.
+     * @return type of schema
+     */
+    public SchemaType getType() {
+        return type;
+    }
+
+    /**
+     * Get additional JSON attributes apart from those defined in the Baiji spec.
+     * @return additional JSON attributes
+     */
+    public PropertyMap getPropertyMap() {
+        return propertyMap;
+    }
 }
