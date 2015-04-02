@@ -1,4 +1,3 @@
 rootProject.name = 'Baiji'
 
 include 'baiji-core'
-

@@ -1,5 +1,6 @@
 package com.xqbase.baiji.schema;
 
+
 /**
  * An abstract data type.
  * <p>A schema may be one of:
@@ -24,6 +25,14 @@ package com.xqbase.baiji.schema;
  * @author Tony He
  */
 public abstract class Schema {
+
+    static final JsonFactory FACTORY = new JsonFactory();
+    static final ObjectMapper MAPPER = new ObjectMapper(FACTORY);
+
+    static {
+        FACTORY.enable(JsonParser.Feature.ALLOW_COMMENTS);
+        FACTORY.setCodec(MAPPER);
+    }
 
     private final SchemaType type;
     private final PropertyMap propertyMap;

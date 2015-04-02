@@ -1,0 +1,18 @@
+import com.xqbase.c
+
+allprojects {
+    ext.buildTimestamp = new Date().format('yyyy-MM-dd HH:mm:ss')
+    if (System.env.SOURCE_MAJOR_VERSION) {
+        majorVersion = System.env.SOURCE_MAJOR_VERSION
+    }
+    if (System.env.SOURCE_MINOR_VERSION) {
+        minorVersion = System.env.SOURCE_MINOR_VERSION
+    }
+    if (System.env.SOURCE_BUILD_NUMBER) {
+        buildNumber = System.env.SOURCE_BUILD_NUMBER
+    }
+    if (System.env.SOURCE_BUILD_ISSNAPSHOT) {
+        isSnapshot = System.env.SOURCE_BUILD_ISSNAPSHOT;
+    }
+    project.version = new ProjectVersion(majorVersion, minorVersion, buildNumber, isSnapshot.toBoolean())
+}
