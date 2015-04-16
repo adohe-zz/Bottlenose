@@ -1,7 +1,7 @@
 subprojects { project ->
 	apply plugin: 'java' // Plugin as major conventions
 
-	sourceCompatibility = 1.6
+	sourceCompatibility = 1.7
     
     [ compileJava, compileTestJava, javadoc ]*.options*.encoding = 'UTF-8'
 	

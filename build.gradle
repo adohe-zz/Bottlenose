@@ -4,6 +4,9 @@ allprojects {
     }
 }
 
+apply from: file('gradle/versioning.gradle')
+apply from: file('gradle/convention.gradle')
+
 subprojects {
     apply plugin: 'eclipse'
     apply plugin: 'idea'
@@ -34,14 +37,9 @@ subprojects {
         module {
             scopes.PROVIDED.plus += configurations.provided
         }
-        project {
-            languageLevel = 7.0
-        }
     }
 
     dependencies {
-        provided 'org.slf4j:slf4j-api:1.7.5'
-        provided 'org.slf4j:slf4j-simple:1.7.5'
         testCompile 'junit:junit:4.11'
     }
 

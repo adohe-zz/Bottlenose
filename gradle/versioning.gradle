@@ -1,4 +1,4 @@
-import com.xqbase.c
+import com.xqbase.ci.ProjectVersion
 
 allprojects {
     ext.buildTimestamp = new Date().format('yyyy-MM-dd HH:mm:ss')
