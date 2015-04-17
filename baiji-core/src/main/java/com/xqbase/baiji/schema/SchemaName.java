@@ -1,7 +1,7 @@
 package com.xqbase.baiji.schema;
 
 /**
- * Schema Name Class.
+ * This class represents the name of a schema.
  *
  * @author Tony He
  */
@@ -25,12 +25,12 @@ public class SchemaName {
             this.space = space;
             this.encSpace = encSpace;
         } else {                                    // qualified name
-            this.space = name.substring(0, lastDot);
             this.name = name.substring(lastDot + 1, name.length());
+            this.space = name.substring(0, lastDot);
             this.encSpace = encSpace;
         }
         String namespace = getNamespace();
-        fullName = namespace != null && namespace.length() != 0 ? namespace + "." + name : name;
+        this.fullName = namespace != null && namespace.length() != 0 ? namespace + "." + name : name;
     }
 
     public String getName() {

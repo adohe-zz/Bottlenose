@@ -1,6 +1,10 @@
 package com.xqbase.baiji.schema;
 
 
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.map.ObjectMapper;
+
 /**
  * An abstract data type.
  * <p>A schema may be one of:
@@ -26,8 +30,8 @@ package com.xqbase.baiji.schema;
  */
 public abstract class Schema {
 
-    static final JsonFactory FACTORY = new JsonFactory();
-    static final ObjectMapper MAPPER = new ObjectMapper(FACTORY);
+    private static final JsonFactory FACTORY = new JsonFactory();
+    private static final ObjectMapper MAPPER = new ObjectMapper(FACTORY);
 
     static {
         FACTORY.enable(JsonParser.Feature.ALLOW_COMMENTS);

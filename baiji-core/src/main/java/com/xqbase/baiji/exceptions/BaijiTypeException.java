@@ -3,6 +3,8 @@ package com.xqbase.baiji.exceptions;
 
 /**
  * Thrown when an illegal type is used.
+ *
+ * @author Tony He
  */
 public class BaijiTypeException extends BaijiRuntimeException {
     public BaijiTypeException(String message) {
