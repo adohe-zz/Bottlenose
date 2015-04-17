@@ -72,7 +72,7 @@ public abstract class Schema {
     public abstract String getName();
 
     /**
-     * Parses a JSON string to create a new schema object
+     * Parses a JSON string to create a new schema object.
      *
      * @param json JSON string
      * @return a new Schema Object
@@ -82,6 +82,18 @@ public abstract class Schema {
             throw new IllegalArgumentException("JSON string cannot be null or empty.");
         }
 
+        return parse(json.trim(), new SchemaNames(), null);
+    }
+
+    /**
+     * Parses a JSON string to create a new schema object.
+     *
+     * @param json JSON string to parse.
+     * @param names list of {@link com.xqbase.baiji.schema.SchemaName}s already read.
+     * @param encSpace enclosing namespace of the schema
+     * @return a schema object.
+     */
+    private static Schema parse(String json, SchemaNames names, String encSpace) {
         return null;
     }
 }

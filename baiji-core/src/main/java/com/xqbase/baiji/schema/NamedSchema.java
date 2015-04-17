@@ -1,5 +1,7 @@
 package com.xqbase.baiji.schema;
 
+import com.xqbase.baiji.exceptions.BaijiRuntimeException;
+
 import java.util.List;
 
 /**
@@ -29,6 +31,9 @@ public abstract class NamedSchema extends Schema {
         this.schemaName = schemaName;
         this.doc = doc;
         this.aliases = aliases;
+        if (schemaName.getName() != null && !names.add(schemaName, this)) {
+            throw new BaijiRuntimeException("Duplicated schema name " + schemaName.getFullName());
+        }
     }
 
     public SchemaName getSchemaName() {
