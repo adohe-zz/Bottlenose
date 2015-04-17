@@ -1,2 +1,5 @@
 rootProject.name = 'Baiji'
 include 'baiji-core'
+include 'baiji-rpc-transport'
+include 'baiji-rpc-message'
+include 'baiji-rpc-client'
