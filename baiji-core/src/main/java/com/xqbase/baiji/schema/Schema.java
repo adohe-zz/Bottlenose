@@ -1,7 +1,9 @@
 package com.xqbase.baiji.schema;
 
 
+import com.xqbase.baiji.exceptions.BaijiRuntimeException;
 import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -89,11 +91,60 @@ public abstract class Schema {
      * Parses a JSON string to create a new schema object.
      *
      * @param json JSON string to parse.
-     * @param names list of {@link com.xqbase.baiji.schema.SchemaName}s already read.
-     * @param encSpace enclosing namespace of the schema
+     * @param names list of {@link SchemaName}s already read.
+     * @param encSpace enclosing namespace of the schema.
      * @return a schema object.
      */
     private static Schema parse(String json, SchemaNames names, String encSpace) {
+        Schema schema = PrimitiveSchema.newInstance(json);
+        if (schema != null)
+            return schema;
+
+        try {
+            JsonNode node = MAPPER.readTree(json);
+            return parse(node, names, encSpace);
+        } catch (Throwable t) {
+
+        }
+        return null;
+    }
+
+    /**
+     * Traverse the JSON node to create a new instance of schema object.
+     *
+     * @param jsonNode the json node.
+     * @param names list of {@link SchemaName}s already read.
+     * @param encSpace enclosing namespace of the schema.
+     * @return a schema object.
+     */
+    private static Schema parse(JsonNode jsonNode, SchemaNames names, String encSpace) {
+        if (jsonNode == null) {
+            throw new IllegalArgumentException("parsed JsonNode can't be null");
+        }
+
+        if (jsonNode.isTextual()) {
+            String value = jsonNode.getTextValue();
+            PrimitiveSchema ps = PrimitiveSchema.newInstance(value);
+            if (ps != null) {
+                return ps;
+            }
+
+            NamedSchema schema = names.getSchema(value, null, encSpace);
+            if (schema != null) {
+                return schema;
+            }
+
+            throw new SchemaParseException("Undefined JsonNode name: " + value);
+        } else if (jsonNode.isArray()) {
+
+        } else if (jsonNode.isObject()) {
+            JsonNode typeNode = jsonNode.get("type");
+            if (typeNode == null) {
+                throw new SchemaParseException("type property can't be null");
+            }
+
+
+        }
         return null;
     }
 }
