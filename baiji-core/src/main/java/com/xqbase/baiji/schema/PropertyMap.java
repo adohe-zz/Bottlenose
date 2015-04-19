@@ -1,10 +1,10 @@
 package com.xqbase.baiji.schema;
 
 import com.xqbase.baiji.exceptions.BaijiRuntimeException;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ObjectNode;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The properties map of each schema.
@@ -43,5 +43,23 @@ public class PropertyMap extends HashMap<String, String> {
             throw new BaijiRuntimeException("Property can't be overwritten: " + key);
         }
         return value;
+    }
+
+    public void parse(JsonNode node) {
+        if (!(node instanceof ObjectNode))
+            return;
+
+        ObjectNode objNode = (ObjectNode) node;
+        Iterator<Map.Entry<String, JsonNode>> fields = objNode.getFields();
+        while (fields.hasNext()) {
+            Map.Entry<String, JsonNode> entry = fields.next();
+            String key = entry.getKey();
+            if (reserved.contains(key))
+                continue;
+            JsonNode value = entry.getValue();
+            if (!containsKey(key)) {
+                put(key, value.isTextual() ? value.getTextValue() : value.asText());
+            }
+        }
     }
 }

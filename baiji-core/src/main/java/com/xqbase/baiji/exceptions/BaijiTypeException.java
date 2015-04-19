@@ -7,6 +7,7 @@ package com.xqbase.baiji.exceptions;
  * @author Tony He
  */
 public class BaijiTypeException extends BaijiRuntimeException {
+
     public BaijiTypeException(String message) {
         super(message);
     }

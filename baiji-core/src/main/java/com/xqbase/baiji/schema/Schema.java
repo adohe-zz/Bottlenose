@@ -95,7 +95,7 @@ public abstract class Schema {
      * @param encSpace enclosing namespace of the schema.
      * @return a schema object.
      */
-    private static Schema parse(String json, SchemaNames names, String encSpace) {
+    protected static Schema parse(String json, SchemaNames names, String encSpace) {
         Schema schema = PrimitiveSchema.newInstance(json);
         if (schema != null)
             return schema;
@@ -117,7 +117,7 @@ public abstract class Schema {
      * @param encSpace enclosing namespace of the schema.
      * @return a schema object.
      */
-    private static Schema parse(JsonNode jsonNode, SchemaNames names, String encSpace) {
+    protected static Schema parse(JsonNode jsonNode, SchemaNames names, String encSpace) {
         if (jsonNode == null) {
             throw new IllegalArgumentException("parsed JsonNode can't be null");
         }
@@ -143,7 +143,22 @@ public abstract class Schema {
                 throw new SchemaParseException("type property can't be null");
             }
 
+            PropertyMap props = JsonHelper.getProperties(jsonNode);
+            if (typeNode.isTextual()) {
+                String type = typeNode.getTextValue();
 
+                if ("array".equals(type)) {
+
+                } else if ("map".equals(type)) {
+
+                }
+
+                PrimitiveSchema ps = PrimitiveSchema.newInstance(type);
+                if (ps != null)
+                    return ps;
+            } else if (typeNode.isArray()) {
+
+            }
         }
         return null;
     }
