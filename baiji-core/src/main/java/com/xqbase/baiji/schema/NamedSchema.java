@@ -1,6 +1,7 @@
 package com.xqbase.baiji.schema;
 
 import com.xqbase.baiji.exceptions.BaijiRuntimeException;
+import org.codehaus.jackson.JsonNode;
 
 import java.util.List;
 
@@ -33,6 +34,19 @@ public abstract class NamedSchema extends Schema {
         this.aliases = aliases;
         if (schemaName.getName() != null && !names.add(schemaName, this)) {
             throw new BaijiRuntimeException("Duplicated schema name " + schemaName.getFullName());
+        }
+    }
+
+    // Static newInstance method.
+    public static NamedSchema newInstance(JsonNode node, PropertyMap props, SchemaNames names,
+                                   String encSpace) {
+        String type = JsonHelper.getRequiredString(node, "type");
+        if ("enum".equals(type)) {
+            return EnumSchema.newInstance(node, props, names, encSpace);
+        } else if ("record".equals(type)) {
+            return RecordSchema.newInstance(node, props, names, encSpace);
+        } else {
+            return names.getSchema(type, null, encSpace);
         }
     }
 

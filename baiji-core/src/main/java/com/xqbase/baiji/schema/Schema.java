@@ -84,7 +84,7 @@ public abstract class Schema {
      */
     public static Schema parse(String json) {
         if (json == null || json.isEmpty()) {
-            throw new IllegalArgumentException("JSON string cannot be null or empty.");
+            throw new IllegalArgumentException("JSON string can't be null or empty.");
         }
 
         return parse(json.trim(), new SchemaNames(), null);
@@ -160,6 +160,7 @@ public abstract class Schema {
                 if (ps != null)
                     return ps;
 
+                return NamedSchema.newInstance(jsonNode, props, names, encSpace);
             } else if (typeNode.isArray()) {
                 return UnionSchema.newInstance((ArrayNode) typeNode, props, names, encSpace);
             }
