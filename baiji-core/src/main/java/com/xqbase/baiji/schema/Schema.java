@@ -6,6 +6,9 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
+
+import java.lang.reflect.Array;
 
 /**
  * An abstract data type.
@@ -136,7 +139,7 @@ public abstract class Schema {
 
             throw new SchemaParseException("Undefined JsonNode name: " + value);
         } else if (jsonNode.isArray()) {
-
+            return UnionSchema.newInstance((ArrayNode) jsonNode, null, names, encSpace);
         } else if (jsonNode.isObject()) {
             JsonNode typeNode = jsonNode.get("type");
             if (typeNode == null) {
@@ -148,16 +151,17 @@ public abstract class Schema {
                 String type = typeNode.getTextValue();
 
                 if ("array".equals(type)) {
-
+                    return ArraySchema.newInstance(jsonNode, props, names, encSpace);
                 } else if ("map".equals(type)) {
-
+                    return MapSchema.newInstance(jsonNode, props, names, encSpace);
                 }
 
                 PrimitiveSchema ps = PrimitiveSchema.newInstance(type);
                 if (ps != null)
                     return ps;
-            } else if (typeNode.isArray()) {
 
+            } else if (typeNode.isArray()) {
+                return UnionSchema.newInstance((ArrayNode) typeNode, props, names, encSpace);
             }
         }
         return null;
