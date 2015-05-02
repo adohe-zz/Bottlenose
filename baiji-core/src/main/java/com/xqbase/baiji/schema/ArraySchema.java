@@ -1,6 +1,7 @@
 package com.xqbase.baiji.schema;
 
 import com.xqbase.baiji.exceptions.BaijiTypeException;
+import com.xqbase.baiji.util.ObjectUtil;
 import org.codehaus.jackson.JsonNode;
 
 /**
@@ -33,5 +34,25 @@ public class ArraySchema extends UnnamedSchema {
         }
 
         return new ArraySchema(parse(itemsNode, names, encSpace), propMap);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj instanceof ArraySchema) {
+            ArraySchema that = (ArraySchema) obj;
+            if (itemSchema.equals(that.itemSchema)) {
+                return ObjectUtil.equals(getPropertyMap(), that.getPropertyMap());
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return 29 * itemSchema.hashCode() + ObjectUtil.hashCode(getPropertyMap());
     }
 }
