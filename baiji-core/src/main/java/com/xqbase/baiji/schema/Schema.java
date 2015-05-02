@@ -1,7 +1,6 @@
 package com.xqbase.baiji.schema;
 
 
-import com.xqbase.baiji.exceptions.BaijiRuntimeException;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
