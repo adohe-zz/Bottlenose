@@ -1,5 +1,6 @@
 package com.xqbase.baiji.schema;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -7,7 +8,7 @@ import java.util.List;
  *
  * @author Tony He
  */
-public class RecordSchema extends NamedSchema {
+public class RecordSchema extends NamedSchema implements Iterable<Field> {
 
     /**
      * Construct a named schema.
@@ -21,5 +22,10 @@ public class RecordSchema extends NamedSchema {
      */
     protected RecordSchema(SchemaType type, SchemaName schemaName, String doc, List<SchemaName> aliases, PropertyMap props, SchemaNames names) {
         super(type, schemaName, doc, aliases, props, names);
+    }
+
+    @Override
+    public Iterator<Field> iterator() {
+        return null;
     }
 }

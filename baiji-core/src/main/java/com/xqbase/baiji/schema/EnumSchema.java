@@ -1,13 +1,14 @@
 package com.xqbase.baiji.schema;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
- * The EnumSchema Definiton.
+ * The EnumSchema Definition.
  *
  * @author Tony He
  */
-public class EnumSchema extends NamedSchema {
+public class EnumSchema extends NamedSchema implements Iterable<String> {
 
     /**
      * Construct a named schema.
@@ -21,5 +22,10 @@ public class EnumSchema extends NamedSchema {
      */
     protected EnumSchema(SchemaType type, SchemaName schemaName, String doc, List<SchemaName> aliases, PropertyMap props, SchemaNames names) {
         super(type, schemaName, doc, aliases, props, names);
+    }
+
+    @Override
+    public Iterator<String> iterator() {
+        return null;
     }
 }

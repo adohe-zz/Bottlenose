@@ -99,6 +99,7 @@ public abstract class Schema {
      * @return a schema object.
      */
     protected static Schema parse(String json, SchemaNames names, String encSpace) {
+        // First try to constructor a PrimitiveSchema instance
         Schema schema = PrimitiveSchema.newInstance(json);
         if (schema != null)
             return schema;
@@ -107,9 +108,8 @@ public abstract class Schema {
             JsonNode node = MAPPER.readTree(json);
             return parse(node, names, encSpace);
         } catch (Throwable t) {
-
+            throw new SchemaParseException("Could not parse. " + t.getMessage() + "\n" + json);
         }
-        return null;
     }
 
     /**
