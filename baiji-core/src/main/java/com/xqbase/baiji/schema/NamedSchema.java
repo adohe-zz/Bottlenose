@@ -38,7 +38,7 @@ public abstract class NamedSchema extends Schema {
     }
 
     // Static newInstance method.
-    public static NamedSchema newInstance(JsonNode node, PropertyMap props, SchemaNames names,
+    protected static NamedSchema newInstance(JsonNode node, PropertyMap props, SchemaNames names,
                                    String encSpace) {
         String type = JsonHelper.getRequiredString(node, "type");
         if ("enum".equals(type)) {
