@@ -4,6 +4,7 @@ import com.xqbase.baiji.exceptions.BaijiRuntimeException;
 import org.codehaus.jackson.JsonNode;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * The abstract named schema.
@@ -14,7 +15,7 @@ public abstract class NamedSchema extends Schema {
 
     private final SchemaName schemaName;
     private final String doc;
-    private final List<SchemaName> aliases;
+    private Set<SchemaName> aliases;
 
     /**
      * Construct a named schema.
@@ -22,16 +23,14 @@ public abstract class NamedSchema extends Schema {
      * @param type the schema type.
      * @param schemaName the schema name.
      * @param doc the schema doc.
-     * @param aliases schema aliases list.
      * @param props the schema properties map.
      * @param names list of named schemas already read
      */
-    protected NamedSchema(SchemaType type, SchemaName schemaName, String doc, List<SchemaName> aliases,
+    protected NamedSchema(SchemaType type, SchemaName schemaName, String doc,
                           PropertyMap props, SchemaNames names) {
         super(type, props);
         this.schemaName = schemaName;
         this.doc = doc;
-        this.aliases = aliases;
         if (schemaName.getName() != null && !names.add(schemaName, this)) {
             throw new BaijiRuntimeException("Duplicated schema name " + schemaName.getFullName());
         }
