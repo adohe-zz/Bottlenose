@@ -5,7 +5,7 @@ import org.codehaus.jackson.JsonNode;
 import java.util.List;
 
 /**
- * This class represents each field of the schema fields array.
+ * This class represents a field within a record.
  *
  * @author Tony He
  */
@@ -14,7 +14,12 @@ public class Field {
     public enum SortOrder {
         ASCENDING,
         DESCENDING,
-        IGNORE
+        IGNORE;
+
+        private String name;
+        private SortOrder() {
+            this.name = this.name().toLowerCase();
+        }
     }
 
     private final String name;

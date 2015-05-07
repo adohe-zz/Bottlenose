@@ -33,8 +33,8 @@ public class SchemaNames implements Iterable<Map.Entry<SchemaName, NamedSchema>>
         return add(schema.getSchemaName(), schema);
     }
 
-    public NamedSchema getSchema(String name, String space, String encSpace) {
-        return names.get(new SchemaName(name, space, encSpace));
+    public NamedSchema getSchema(String name, String space) {
+        return names.get(new SchemaName(name, space));
     }
 
     @Override
