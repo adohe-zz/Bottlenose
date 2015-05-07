@@ -97,11 +97,6 @@ public class RecordSchema extends NamedSchema implements Iterable<Field> {
         return null;
     }
 
-    @Override
-    public Iterator<Field> iterator() {
-        return null;
-    }
-
     // Add one field to the field map
     private static void addToFieldMap(Map<String, Field> map, String name, Field field) {
         String lowerCaseName = name.toLowerCase();
@@ -109,5 +104,10 @@ public class RecordSchema extends NamedSchema implements Iterable<Field> {
             throw new SchemaParseException("field or alias " + name + " is a duplicate name");
         }
         map.put(lowerCaseName, field);
+    }
+
+    @Override
+    public Iterator<Field> iterator() {
+        return null;
     }
 }

@@ -1,8 +1,11 @@
 package com.xqbase.baiji.schema;
 
 import org.codehaus.jackson.JsonNode;
-
 import java.util.List;
+import com.xqbase.baiji.util.ObjectUtil;
+import org.codehaus.jackson.JsonGenerator;
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * This class represents a field within a record.
@@ -39,7 +42,7 @@ public class Field {
     private final PropertyMap props;
 
     /**
-     * Constructor for the field class.
+     * Constructor for the field class
      *
      * @param schema       schema for the field type
      * @param name         name of the field
@@ -76,18 +79,6 @@ public class Field {
         return props;
     }
 
-    public Schema getSchema() {
-        return schema;
-    }
-
-    public SortOrder getOrdering() {
-        return ordering;
-    }
-
-    public JsonNode getDefaultValue() {
-        return defaultValue;
-    }
-
     public String getDoc() {
         return doc;
     }
@@ -98,5 +89,12 @@ public class Field {
 
     public List<String> getAliases() {
         return aliases;
+    }
+    public SortOrder getOrdering() {
+        return ordering;
+    }
+
+    public Schema getSchema() {
+        return schema;
     }
 }
