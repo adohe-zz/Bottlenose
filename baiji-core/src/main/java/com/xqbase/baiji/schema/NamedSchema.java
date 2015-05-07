@@ -59,8 +59,8 @@ public abstract class NamedSchema extends Schema {
         return schemaName.getName();
     }
 
-    public String getNamespace() {
-        return schemaName.getNamespace();
+    public String getNameSpace() {
+        return schemaName.getNameSpace();
     }
 
     public String getFullName() {

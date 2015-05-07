@@ -1,52 +1,40 @@
 package com.xqbase.baiji.schema;
 
 /**
- * This class represents the name of a schema.
+ * This class represents the name of {@link NamedSchema}.
  *
  * @author Tony He
  */
 public class SchemaName {
 
     private final String name;
-    private final String space;
-    private final String encSpace;
+    private final String namespace;
     private final String fullName;
 
-    public SchemaName(String name, String space, String encSpace) {
+    public SchemaName(String name, String namespace) {
         if (name == null) {                         // anonymous
-            this.name = this.space = null;
-            this.encSpace = encSpace;
-            this.fullName = null;
+            this.name = this.namespace = this.fullName = null;
             return;
         }
         int lastDot = name.lastIndexOf('.');
         if (lastDot < 0) {                          // unqualified name
             this.name = name;
-            this.space = space;
-            this.encSpace = encSpace;
         } else {                                    // qualified name
             this.name = name.substring(lastDot + 1, name.length());
-            this.space = name.substring(0, lastDot);
-            this.encSpace = encSpace;
+            namespace = name.substring(0, lastDot);
         }
-        String namespace = getNamespace();
-        this.fullName = namespace != null && namespace.length() != 0 ? namespace + "." + name : name;
+        if ("".equals(namespace))
+            namespace = null;
+        this.namespace = namespace;
+        this.fullName = (this.namespace == null) ? this.name : this.namespace + "." + this.name;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getSpace() {
-        return space;
-    }
-
-    public String getEncSpace() {
-        return encSpace;
-    }
-
-    public String getNamespace() {
-        return space != null && space.length() != 0 ? space : encSpace;
+    public String getNameSpace() {
+        return namespace;
     }
 
     public String getFullName() {
