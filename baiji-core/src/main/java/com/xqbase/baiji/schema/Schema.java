@@ -129,7 +129,7 @@ public abstract class Schema {
                 return ps;
             }
 
-            NamedSchema schema = names.getSchema(value, null, encSpace);
+            NamedSchema schema = names.getSchema(value, null);
             if (schema != null) {
                 return schema;
             }

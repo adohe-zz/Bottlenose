@@ -46,7 +46,7 @@ public abstract class NamedSchema extends Schema {
         } else if ("record".equals(type)) {
             return RecordSchema.newInstance(node, props, names, encSpace);
         } else {
-            return names.getSchema(type, null, encSpace);
+            return names.getSchema(type, null);
         }
     }
 
