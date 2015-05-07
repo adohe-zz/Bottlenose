@@ -84,7 +84,7 @@ public abstract class Schema {
             throw new IllegalArgumentException("JSON string can't be null or empty.");
         }
 
-        return parse(json.trim(), new SchemaNames(), null);
+        return parse(json.trim(), new SchemaNames(), null);  // standalone schema, so no enclosing namespace
     }
 
     /**

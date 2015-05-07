@@ -79,7 +79,7 @@ public interface Encoder extends Flushable {
 
     /**
      * Write a Unicode character string.  The default implementation converts
-     * the String to a {@link com.ctriposs.baiji.util.Utf8}.  Some Encoder
+     * the String to a {@link com.xqbase.baiji.util.Utf8}.  Some Encoder
      * implementations may want to do something different as a performance optimization.
      *
      * @throws BaijiTypeException If this is a stateful writer and a
