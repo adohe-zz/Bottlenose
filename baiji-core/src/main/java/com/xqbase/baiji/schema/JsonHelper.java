@@ -24,17 +24,17 @@ public class JsonHelper {
         return !props.isEmpty() ? props : null;
     }
 
-    /**
-     * Returns value of specific string field (this field is required).
+    /** Extracts text value associated to key from the container JsonNode,
+     * and throws {@link SchemaParseException} if it doesn't exist.
      *
-     * @param node the JSON Object node.
-     * @param field field name.
-     * @return the value of field otherwise throw {@link SchemaParseException}
+     * @param container Container where to find key.
+     * @param key Key to look for in container.
+     * @param error String to prepend to the SchemaParseException.
      */
-    public static String getRequiredString(JsonNode node, String field) {
-        String value = getOptionalString(node, field);
-        if (value == null || value.length() == 0) {
-            throw new SchemaParseException("No \"" + field + "\" JSON field: " + node);
+    public static String getRequiredString(JsonNode container, String key, String error) {
+        String value = getOptionalString(container, key);
+        if (null == value || value.length() == 0) {
+            throw new SchemaParseException(error + ":" + container);
         }
         return value;
     }
@@ -42,33 +42,23 @@ public class JsonHelper {
     /**
      * Returns value of specific string field (this field is optional).
      *
-     * @param node the JSON Object node.
-     * @param field field name.
+     * @param container the JSON Object node.
+     * @param key the key.
      * @return the value of field otherwise throw {@link SchemaParseException}
      */
-    public static String getOptionalString(JsonNode node, String field) {
-        if (node == null) {
+    public static String getOptionalString(JsonNode container, String key) {
+        if (null == container) {
             throw new IllegalArgumentException("node cannot be null.");
         }
-        ensureValidFieldName(field);
+        ensureValidKey(key);
 
-        JsonNode fieldNode = node.get(field);
-        if (fieldNode == null) {
-            return null;
-        }
-
-        if (fieldNode.isNull()) {
-            return null;
-        }
-        if (fieldNode.isTextual()) {
-            return fieldNode.getTextValue();
-        }
-        throw new SchemaParseException("Field " + field + " is not a string");
+        JsonNode jsonNode = container.get(key);
+        return jsonNode != null ? jsonNode.getTextValue() : null;
     }
 
-    private static void ensureValidFieldName(String field) {
-        if (field == null || field.isEmpty()) {
-            throw new IllegalArgumentException("field cannot be null or empty");
+    private static void ensureValidKey(String key) {
+        if (null == key || key.isEmpty()) {
+            throw new IllegalArgumentException("key cannot be null or empty");
         }
     }
 }

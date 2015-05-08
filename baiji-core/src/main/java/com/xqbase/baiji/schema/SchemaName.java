@@ -1,7 +1,7 @@
 package com.xqbase.baiji.schema;
 
 /**
- * This class represents the name of {@link NamedSchema}.
+ * This class represents the name of a {@link NamedSchema}.
  *
  * @author Tony He
  */

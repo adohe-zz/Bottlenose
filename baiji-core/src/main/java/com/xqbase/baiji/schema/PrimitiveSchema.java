@@ -12,20 +12,6 @@ import java.util.Map;
  */
 public class PrimitiveSchema extends UnnamedSchema {
 
-    private static final Map<String, SchemaType> typeMap = new HashMap<String, SchemaType>();
-
-    static {
-        typeMap.put("null", SchemaType.NULL);
-        typeMap.put("boolean", SchemaType.BOOLEAN);
-        typeMap.put("int", SchemaType.INT);
-        typeMap.put("long", SchemaType.LONG);
-        typeMap.put("float", SchemaType.FLOAT);
-        typeMap.put("double", SchemaType.DOUBLE);
-        typeMap.put("bytes", SchemaType.BYTES);
-        typeMap.put("string", SchemaType.STRING);
-        typeMap.put("datetime", SchemaType.DATETIME);
-    }
-
     protected PrimitiveSchema(SchemaType type, PropertyMap propertyMap) {
         super(type, propertyMap);
     }
@@ -45,7 +31,7 @@ public class PrimitiveSchema extends UnnamedSchema {
         if (type.startsWith(quote) && type.endsWith(quote)) {
             type = type.substring(1, type.length() - 2);
         }
-        SchemaType schemaType = typeMap.get(type);
+        SchemaType schemaType = PRIMITIVES.get(type);
         return schemaType != null ? new PrimitiveSchema(schemaType, props) : null;
     }
 

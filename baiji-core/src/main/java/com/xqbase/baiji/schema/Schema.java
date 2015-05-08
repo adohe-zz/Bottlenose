@@ -7,6 +7,9 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * An abstract data type.
  * <p>A schema may be one of:
@@ -35,9 +38,20 @@ public abstract class Schema {
     private static final JsonFactory FACTORY = new JsonFactory();
     private static final ObjectMapper MAPPER = new ObjectMapper(FACTORY);
 
+    static final Map<String, SchemaType> PRIMITIVES = new HashMap<>();
+    
     static {
         FACTORY.enable(JsonParser.Feature.ALLOW_COMMENTS);
         FACTORY.setCodec(MAPPER);
+        PRIMITIVES.put("null", SchemaType.NULL);
+        PRIMITIVES.put("boolean", SchemaType.BOOLEAN);
+        PRIMITIVES.put("int", SchemaType.INT);
+        PRIMITIVES.put("long", SchemaType.LONG);
+        PRIMITIVES.put("float", SchemaType.FLOAT);
+        PRIMITIVES.put("double", SchemaType.DOUBLE);
+        PRIMITIVES.put("bytes", SchemaType.BYTES);
+        PRIMITIVES.put("string", SchemaType.STRING);
+        PRIMITIVES.put("datetime", SchemaType.DATETIME);
     }
 
     private final SchemaType type;
@@ -118,7 +132,7 @@ public abstract class Schema {
      * @return a schema object.
      */
     protected static Schema parse(JsonNode jsonNode, SchemaNames names, String encSpace) {
-        if (jsonNode == null) {
+        if (null == jsonNode) {
             throw new IllegalArgumentException("parsed JsonNode can't be null");
         }
 
@@ -139,7 +153,7 @@ public abstract class Schema {
             return UnionSchema.newInstance((ArrayNode) jsonNode, null, names, encSpace);
         } else if (jsonNode.isObject()) {
             JsonNode typeNode = jsonNode.get("type");
-            if (typeNode == null) {
+            if (null == typeNode) {
                 throw new SchemaParseException("type property can't be null");
             }
 
