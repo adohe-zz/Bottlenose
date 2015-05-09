@@ -39,8 +39,7 @@ public abstract class NamedSchema extends Schema {
     }
 
     // Static newInstance method.
-    protected static NamedSchema newInstance(JsonNode node, PropertyMap props, SchemaNames names,
-                                   String encSpace) {
+    protected static NamedSchema newInstance(JsonNode node, PropertyMap props, SchemaNames names) {
         String type = JsonHelper.getRequiredString(node, "type", "No type");
         String space = JsonHelper.getOptionalString(node, "namespace");
         String doc = JsonHelper.getOptionalString(node, "doc");
@@ -50,7 +49,7 @@ public abstract class NamedSchema extends Schema {
         if ("enum".equals(type)) {
             result = EnumSchema.newInstance(node, name, doc, props, names);
         } else if ("record".equals(type)) {
-            result = RecordSchema.newInstance(node, props, names, encSpace);
+            result = RecordSchema.newInstance(node, name, doc, props, names);
         } else {
             return names.getSchema(type, null);
         }

@@ -78,20 +78,29 @@ public class RecordSchema extends NamedSchema implements Iterable<Field> {
      * Static function to return new instance of the record schema
      *
      * @param node     JSON object for the record schema
+     * @param name     name of the record schema
+     * @param doc      documentation to the user of this schema
      * @param props    the schema properties map
      * @param names    list of named schema already read
-     * @param encSpace enclosing namespace of the records schema
      * @return a new {@link RecordSchema} instance
      */
-    protected static RecordSchema newInstance(JsonNode node, PropertyMap props, SchemaNames names,
-                             String encSpace) {
-        boolean request = false;
+    protected static RecordSchema newInstance(JsonNode node, SchemaName name, String doc, PropertyMap props,
+                SchemaNames names) {
         JsonNode fieldsNode = node.get("fields");
-        if (fieldsNode == null) {
-            JsonNode requestNode = node.get("request");
-            if (requestNode != null) {
-                request = true;
+        if (null == fieldsNode || !fieldsNode.isArray()) {
+            throw new SchemaParseException("Record has no fields " + node);
+        }
+        for (JsonNode field : fieldsNode) {
+            String fieldName = JsonHelper.getRequiredString(field, "name", "No field name");
+            String fieldDoc = JsonHelper.getOptionalString(field, "doc");
+            JsonNode fieldTypeNode = field.get("type");
+            if (null == fieldTypeNode) {
+                throw new SchemaParseException("No field type " + field);
             }
+            if (fieldTypeNode.isTextual()) {
+
+            }
+
         }
 
         return null;

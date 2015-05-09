@@ -1,11 +1,7 @@
 package com.xqbase.baiji.schema;
 
 import org.codehaus.jackson.JsonNode;
-import java.util.List;
-import com.xqbase.baiji.util.ObjectUtil;
-import org.codehaus.jackson.JsonGenerator;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * This class represents a field within a record.
@@ -27,7 +23,7 @@ public class Field {
 
     private final String name;
 
-    private final List<String> aliases;
+    private final Set<String> aliases;
 
     private final int pos;
 
@@ -46,14 +42,14 @@ public class Field {
      *
      * @param schema       schema for the field type
      * @param name         name of the field
-     * @param aliases      list of aliases for the name of the field
+     * @param aliases      set of aliases for the name of the field
      * @param pos          position of the field
      * @param doc          documentation for the field
      * @param defaultValue field's default value if it exists
      * @param sortOrder    sort order of the field
      * @param props        properties map
      */
-    public Field(Schema schema, String name, List<String> aliases, int pos, String doc,
+    public Field(Schema schema, String name, Set<String> aliases, int pos, String doc,
                  JsonNode defaultValue, SortOrder sortOrder, PropertyMap props) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("name cannot be null.");
@@ -87,7 +83,7 @@ public class Field {
         return pos;
     }
 
-    public List<String> getAliases() {
+    public Set<String> getAliases() {
         return aliases;
     }
     public SortOrder getOrdering() {

@@ -32,15 +32,14 @@ public class UnionSchema extends UnnamedSchema {
      * @param array    JSON object for the union schema
      * @param props    properties map.
      * @param names    list of named schemas already read
-     * @param encSpace enclosing namespace of the schema
      * @return a new {@link UnionSchema} instance
      */
-    public static UnionSchema newInstance(ArrayNode array, PropertyMap props, SchemaNames names, String encSpace) {
+    public static UnionSchema newInstance(ArrayNode array, PropertyMap props, SchemaNames names) {
         List<Schema> schemas = new ArrayList<Schema>();
         Map<String, String> uniqueSchemas = new HashMap<String, String>();
 
         for (JsonNode node : array) {
-            Schema unionType = parse(node, names, encSpace);
+            Schema unionType = parse(node, names);
             if (null == unionType) {
                 throw new SchemaParseException("Invalid JSON in union" + node);
             }

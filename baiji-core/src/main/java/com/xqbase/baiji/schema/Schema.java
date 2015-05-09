@@ -98,7 +98,7 @@ public abstract class Schema {
             throw new IllegalArgumentException("JSON string can't be null or empty.");
         }
 
-        return parse(json.trim(), new SchemaNames(), null);  // standalone schema, so no enclosing namespace
+        return parse(json.trim(), new SchemaNames());  // standalone schema, so no enclosing namespace
     }
 
     /**
@@ -106,10 +106,9 @@ public abstract class Schema {
      *
      * @param json JSON string to parse.
      * @param names list of {@link SchemaName}s already read.
-     * @param encSpace enclosing namespace of the schema.
      * @return a schema object.
      */
-    protected static Schema parse(String json, SchemaNames names, String encSpace) {
+    protected static Schema parse(String json, SchemaNames names) {
         // First try to constructor a PrimitiveSchema instance
         Schema schema = PrimitiveSchema.newInstance(json);
         if (schema != null)
@@ -117,7 +116,7 @@ public abstract class Schema {
 
         try {
             JsonNode node = MAPPER.readTree(json);
-            return parse(node, names, encSpace);
+            return parse(node, names);
         } catch (Throwable t) {
             throw new SchemaParseException("Could not parse. " + t.getMessage() + "\n" + json);
         }
@@ -128,10 +127,9 @@ public abstract class Schema {
      *
      * @param jsonNode the json node.
      * @param names list of {@link SchemaName}s already read.
-     * @param encSpace enclosing namespace of the schema.
      * @return a schema object.
      */
-    protected static Schema parse(JsonNode jsonNode, SchemaNames names, String encSpace) {
+    protected static Schema parse(JsonNode jsonNode, SchemaNames names) {
         if (null == jsonNode) {
             throw new IllegalArgumentException("parsed JsonNode can't be null");
         }
@@ -150,7 +148,7 @@ public abstract class Schema {
 
             throw new SchemaParseException("Undefined JsonNode name: " + value);
         } else if (jsonNode.isArray()) {
-            return UnionSchema.newInstance((ArrayNode) jsonNode, null, names, encSpace);
+            return UnionSchema.newInstance((ArrayNode) jsonNode, null, names);
         } else if (jsonNode.isObject()) {
             JsonNode typeNode = jsonNode.get("type");
             if (null == typeNode) {
@@ -162,18 +160,18 @@ public abstract class Schema {
                 String type = typeNode.getTextValue();
 
                 if ("array".equals(type)) {
-                    return ArraySchema.newInstance(jsonNode, props, names, encSpace);
+                    return ArraySchema.newInstance(jsonNode, props, names);
                 } else if ("map".equals(type)) {
-                    return MapSchema.newInstance(jsonNode, props, names, encSpace);
+                    return MapSchema.newInstance(jsonNode, props, names);
                 }
 
                 PrimitiveSchema ps = PrimitiveSchema.newInstance(type);
                 if (ps != null)
                     return ps;
 
-                return NamedSchema.newInstance(jsonNode, props, names, encSpace);
+                return NamedSchema.newInstance(jsonNode, props, names);
             } else if (typeNode.isArray()) {
-                return UnionSchema.newInstance((ArrayNode) typeNode, props, names, encSpace);
+                return UnionSchema.newInstance((ArrayNode) typeNode, props, names);
             }
         }
         return null;

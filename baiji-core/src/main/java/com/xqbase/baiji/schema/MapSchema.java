@@ -26,16 +26,15 @@ public class MapSchema extends UnnamedSchema {
      * @param mapNode  JSON object for the map schema.
      * @param props    properties map.
      * @param names    list of named schemas already read.
-     * @param encSpace enclosing namespace of the map schema.
      * @return a {@link MapSchema} instance.
      */
-    public static MapSchema newInstance(JsonNode mapNode, PropertyMap props, SchemaNames names, String encSpace) {
+    public static MapSchema newInstance(JsonNode mapNode, PropertyMap props, SchemaNames names) {
         JsonNode valuesNode = mapNode.get("values");
         if (valuesNode == null) {
             throw new BaijiTypeException("Map does not have 'values'");
         }
 
-        return new MapSchema(parse(valuesNode, names, encSpace), props);
+        return new MapSchema(parse(valuesNode, names), props);
     }
 
     @Override

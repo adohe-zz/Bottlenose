@@ -27,13 +27,13 @@ public class ArraySchema extends UnnamedSchema {
     }
 
     public static ArraySchema newInstance(JsonNode node, PropertyMap propMap,
-                    SchemaNames names, String encSpace) {
+                    SchemaNames names) {
         JsonNode itemsNode = node.get("items");
         if (itemsNode == null) {
             throw new BaijiTypeException("Array type doesn't have items");
         }
 
-        return new ArraySchema(parse(itemsNode, names, encSpace), propMap);
+        return new ArraySchema(parse(itemsNode, names), propMap);
     }
 
     @Override
