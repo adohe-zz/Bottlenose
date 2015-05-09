@@ -19,6 +19,7 @@ import java.util.Calendar;
  * <p/>
  *
  * @see Encoder
+ *
  */
 
 public interface Decoder {

@@ -1,138 +1,78 @@
 package com.xqbase.baiji.io;
 
+import com.xqbase.baiji.util.Utf8;
+
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Calendar;
 
 /**
  * An abstract {@link Encoder} for Baiji's binary encoding.
- * <p/>
  *
- * @see Encoder
- * @see Decoder
+ * @author Tony He
  */
-public class BinaryEncoder implements Encoder {
+public abstract class BinaryEncoder implements Encoder {
 
-    private static final int ONE_MINUTE = 1000 * 60;
+    @Override
+    public void writeNull() throws IOException {}
 
-    private final OutputStream _stream;
-
-    public BinaryEncoder() {
-        this(null);
-    }
-
-    public BinaryEncoder(OutputStream stream) {
-        _stream = stream;
+    @Override
+    public void writeString(Utf8 utf8) throws IOException {
+        this.writeBytes(utf8.getBytes(), 0, utf8.getByteLength());
     }
 
     @Override
-    public void writeNull() throws IOException {
-    }
-
-    @Override
-    public void writeBoolean(boolean b) throws IOException {
-        doWriteByte((byte) (b ? 1 : 0));
-    }
-
-    @Override
-    public void writeInt(int value) throws IOException {
-        writeLong(value);
-    }
-
-    public void writeLong(long value) throws IOException {
-        long n = (value << 1) ^ (value >> 63);
-        while ((n & ~0x7FL) != 0) {
-            doWriteByte((byte) ((n | 0x80) & 0xFF));
-            n >>>= 7;
+    public void writeBytes(byte[] bytes, int start, int len) throws IOException {
+        if (0 == len) {
+            writeZero();
+            return;
         }
-        doWriteByte((byte) n);
-    }
-
-    public void writeFloat(float value) throws IOException {
-        int bits = Float.floatToRawIntBits(value);
-        doWriteByte((byte) ((bits) & 0xFF));
-        doWriteByte((byte) ((bits >> 8) & 0xFF));
-        doWriteByte((byte) ((bits >> 16) & 0xFF));
-        doWriteByte((byte) ((bits >> 24) & 0xFF));
+        this.writeInt(len);
+        this.writeBytes(bytes, start, len);
     }
 
     @Override
-    public void writeDouble(double value) throws IOException {
-        long bits = Double.doubleToLongBits(value);
-        doWriteByte((byte) ((bits) & 0xFF));
-        doWriteByte((byte) ((bits >> 8) & 0xFF));
-        doWriteByte((byte) ((bits >> 16) & 0xFF));
-        doWriteByte((byte) ((bits >> 24) & 0xFF));
-        doWriteByte((byte) ((bits >> 32) & 0xFF));
-        doWriteByte((byte) ((bits >> 40) & 0xFF));
-        doWriteByte((byte) ((bits >> 48) & 0xFF));
-        doWriteByte((byte) ((bits >> 56) & 0xFF));
+    public void writeEnum(int e) throws IOException {
+        this.writeInt(e);
     }
 
     @Override
-    public void writeBytes(byte[] value) throws IOException {
-        writeLong(value.length);
-        doWriteBytes(value);
-    }
+    public void writeArrayStart() throws IOException {}
 
     @Override
-    public void writeDatetime(Calendar date) throws IOException {
-        int offset = date.getTimeZone().getOffset(date.getTimeInMillis());
-        int minutes = offset/ONE_MINUTE;
-        writeLong(date.getTimeInMillis());
-        writeLong(minutes);
-    }
-
-    @Override
-    public void writeString(String value) throws IOException {
-        writeBytes(value.getBytes("utf-8"));
-    }
-
-    @Override
-    public void writeEnum(int value) throws IOException {
-        writeLong(value);
-    }
-
-    @Override
-    public void startItem() throws IOException {
-    }
-
-    @Override
-    public void setItemCount(long value) throws IOException {
-        if (value > 0) {
-            writeLong(value);
+    public void setItemCount(long itemCount) throws IOException {
+        if (itemCount > 0) {
+            this.writeLong(itemCount);
         }
     }
 
-    public void writeArrayStart() throws IOException {
-    }
+    @Override
+    public void startItem() throws IOException {}
 
+    @Override
     public void writeArrayEnd() throws IOException {
-        writeLong(0);
-    }
-
-    public void writeMapStart() throws IOException {
-    }
-
-    public void writeMapEnd() throws IOException {
-        writeLong(0);
-    }
-
-    public void writeUnionIndex(int value) throws IOException {
-        writeLong(value);
-    }
-
-    private void doWriteBytes(byte[] bytes) throws IOException {
-        _stream.write(bytes, 0, bytes.length);
-    }
-
-    private void doWriteByte(byte b) throws IOException {
-        _stream.write(b);
+        writeZero();
     }
 
     @Override
-    public void flush() throws IOException {
-        _stream.flush();
-    }
-}
+    public void writeMapStart() throws IOException {}
 
+    @Override
+    public void writeMapEnd() throws IOException {
+        writeZero();
+    }
+
+    @Override
+    public void writeUnionIndex(int unionIndex) throws IOException {
+        writeInt(unionIndex);
+    }
+
+    /** Write a zero byte to the underlying output. **/
+    protected abstract void writeZero() throws IOException;
+
+    /**
+     * Returns the number of bytes currently buffered by this encoder. If this
+     * Encoder does not buffer, this will always return zero.
+     * <p/>
+     * Call {@link #flush()} to empty the buffer to the underlying output.
+     */
+    public abstract int bytesBuffered();
+}

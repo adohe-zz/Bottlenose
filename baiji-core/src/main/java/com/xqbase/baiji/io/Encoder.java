@@ -1,6 +1,7 @@
 package com.xqbase.baiji.io;
 
 import com.xqbase.baiji.exceptions.BaijiTypeException;
+import com.xqbase.baiji.util.Utf8;
 
 import java.io.Flushable;
 import java.io.IOException;
@@ -85,7 +86,7 @@ public interface Encoder extends Flushable {
      * @throws BaijiTypeException If this is a stateful writer and a
      *                            char-string is not expected
      */
-    public void writeString(String str) throws IOException;
+    public void writeString(Utf8 str) throws IOException;
 
     /**
      * Writes a byte string.
@@ -96,6 +97,13 @@ public interface Encoder extends Flushable {
      *                            byte-string is not expected
      */
     public void writeBytes(byte[] bytes) throws IOException;
+
+    /**
+     * Write a byte string.
+     * @throws BaijiTypeException If this is a stateful writer and a
+     * byte-string is not expected
+     */
+    public abstract void writeBytes(byte[] bytes, int start, int len) throws IOException;
 
     /**
      * Write a date
