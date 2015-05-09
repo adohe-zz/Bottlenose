@@ -33,6 +33,7 @@ public abstract class NamedSchema extends Schema {
         super(type, props);
         this.schemaName = schemaName;
         this.doc = doc;
+        this.aliases = aliases;
         if (schemaName.getName() != null && !names.add(schemaName, this)) {
             throw new BaijiRuntimeException("Duplicated schema name " + schemaName.getFullName());
         }
@@ -46,13 +47,11 @@ public abstract class NamedSchema extends Schema {
         SchemaName name = new SchemaName(JsonHelper.getRequiredString(node, "name", "No schema name"), space);
         Set<String> aliases = getAliases(node);
 
-        NamedSchema result;
+        NamedSchema result = null;
         if ("enum".equals(type)) {
-            result = EnumSchema.newInstance(node, name, doc, props, names);
+            result = EnumSchema.newInstance(node, name, doc, aliases, props, names);
         } else if ("record".equals(type)) {
             result = RecordSchema.newInstance(node, name, doc, aliases, props, names);
-        } else {
-            return names.getSchema(type, null);
         }
 
         return result;

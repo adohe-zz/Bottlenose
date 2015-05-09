@@ -30,7 +30,7 @@ public class ArraySchema extends UnnamedSchema {
                     SchemaNames names) {
         JsonNode itemsNode = node.get("items");
         if (itemsNode == null) {
-            throw new BaijiTypeException("Array type doesn't have items");
+            throw new SchemaParseException("Array has no items type: " + node);
         }
 
         return new ArraySchema(parse(itemsNode, names), propMap);
@@ -38,17 +38,12 @@ public class ArraySchema extends UnnamedSchema {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
+        if (obj == this) return true;
+        if (!(obj instanceof ArraySchema)) return false;
 
-        if (obj instanceof ArraySchema) {
-            ArraySchema that = (ArraySchema) obj;
-            if (itemSchema.equals(that.itemSchema)) {
-                return ObjectUtil.equals(getPropertyMap(), that.getPropertyMap());
-            }
-        }
-        return false;
+        ArraySchema that = (ArraySchema) obj;
+        return itemSchema.equals(that.itemSchema)
+                && ObjectUtil.equals(getPropertyMap(), that.getPropertyMap());
     }
 
     @Override

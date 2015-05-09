@@ -31,7 +31,7 @@ public class MapSchema extends UnnamedSchema {
     public static MapSchema newInstance(JsonNode mapNode, PropertyMap props, SchemaNames names) {
         JsonNode valuesNode = mapNode.get("values");
         if (valuesNode == null) {
-            throw new BaijiTypeException("Map does not have 'values'");
+            throw new BaijiTypeException("Map has no values type: " + mapNode);
         }
 
         return new MapSchema(parse(valuesNode, names), props);
@@ -39,17 +39,12 @@ public class MapSchema extends UnnamedSchema {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof MapSchema)) {
-            return false;
-        }
+        if (this == obj) return true;
+        if (!(obj instanceof MapSchema)) return false;
+
         MapSchema that = (MapSchema) obj;
-        if (that == null) {
-            return false;
-        }
-        return valueSchema.equals(that.valueSchema) && ObjectUtil.equals(that.getPropertyMap(), getPropertyMap());
+        return valueSchema.equals(that.valueSchema)
+                && ObjectUtil.equals(that.getPropertyMap(), getPropertyMap());
     }
 
 
