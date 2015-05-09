@@ -17,7 +17,7 @@ public abstract class NamedSchema extends Schema {
 
     private final SchemaName schemaName;
     private final String doc;
-    private Set<SchemaName> aliases;
+    private Set<String> aliases;
 
     /**
      * Construct a named schema.
@@ -29,7 +29,7 @@ public abstract class NamedSchema extends Schema {
      * @param names list of named schemas already read
      */
     protected NamedSchema(SchemaType type, SchemaName schemaName, String doc,
-                Set<SchemaName> aliases, PropertyMap props, SchemaNames names) {
+                Set<String> aliases, PropertyMap props, SchemaNames names) {
         super(type, props);
         this.schemaName = schemaName;
         this.doc = doc;
@@ -44,12 +44,13 @@ public abstract class NamedSchema extends Schema {
         String space = JsonHelper.getOptionalString(node, "namespace");
         String doc = JsonHelper.getOptionalString(node, "doc");
         SchemaName name = new SchemaName(JsonHelper.getRequiredString(node, "name", "No schema name"), space);
+        Set<String> aliases = getAliases(node);
 
         NamedSchema result;
         if ("enum".equals(type)) {
             result = EnumSchema.newInstance(node, name, doc, props, names);
         } else if ("record".equals(type)) {
-            result = RecordSchema.newInstance(node, name, doc, props, names);
+            result = RecordSchema.newInstance(node, name, doc, aliases, props, names);
         } else {
             return names.getSchema(type, null);
         }
@@ -82,10 +83,8 @@ public abstract class NamedSchema extends Schema {
      * Parses the 'aliases' property from the given JSON token. (just named schema may has such property)
      *
      * @param schema     JSON object to read
-     * @param space      namespace of the name this alias is for
-     * @return Set of SchemaName that represents the list of alias. If no 'aliases' specified, then it returns null.
      */
-    protected static Set<SchemaName> getAliases(JsonNode schema, String space) {
+    protected static Set<String> getAliases(JsonNode schema) {
         JsonNode aliasesNode = schema.get("aliases");
         if (null == aliasesNode) {
             return null;
@@ -95,13 +94,13 @@ public abstract class NamedSchema extends Schema {
             throw new SchemaParseException("Aliases must be of format JSON array of strings");
         }
 
-        Set<SchemaName> aliases = new LinkedHashSet<>();
+        Set<String> aliases = new LinkedHashSet<>();
         for (JsonNode aliasNode : aliasesNode) {
             if (!aliasNode.isTextual()) {
                 throw new SchemaParseException("Aliases must be of format JSON array of strings");
             }
 
-            aliases.add(new SchemaName(aliasNode.getTextValue(), space));
+            aliases.add(aliasNode.getTextValue());
         }
         return aliases;
     }
