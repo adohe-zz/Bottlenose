@@ -1,5 +1,6 @@
 package com.xqbase.baiji.schema;
 
+import com.xqbase.baiji.exceptions.BaijiRuntimeException;
 import com.xqbase.baiji.util.ObjectUtil;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
@@ -17,13 +18,22 @@ import java.util.Map;
 public class UnionSchema extends UnnamedSchema {
 
     private final List<Schema> schemas;
+    private final Map<String,Integer> indexByName
+            = new HashMap<String,Integer>();
 
-    protected UnionSchema(final List<Schema> schemas, PropertyMap propertyMap) {
+    protected UnionSchema(final LockableArrayList<Schema> schemas, PropertyMap propertyMap) {
         super(SchemaType.UNION, propertyMap);
-        if (schemas == null) {
-            throw new IllegalArgumentException("schema list should not be null");
+        this.schemas = schemas.lock();
+        int index = 0;
+        for (Schema schema : schemas) {
+            if (schema.getType() == SchemaType.UNION)
+                throw new BaijiRuntimeException("Nested union" + this);
+            String name = schema.getName();
+            if (null == name)
+                throw new BaijiRuntimeException("Nameless in union" + this);
+            if (indexByName.put(name, index ++) != null)
+                throw new BaijiRuntimeException("Duplicate in union" + name);
         }
-        this.schemas = schemas;
     }
 
     /**
@@ -35,8 +45,7 @@ public class UnionSchema extends UnnamedSchema {
      * @return a new {@link UnionSchema} instance
      */
     public static UnionSchema newInstance(ArrayNode array, PropertyMap props, SchemaNames names) {
-        List<Schema> schemas = new ArrayList<Schema>();
-        Map<String, String> uniqueSchemas = new HashMap<String, String>();
+        LockableArrayList<Schema> schemas = new LockableArrayList<>(array.size());
 
         for (JsonNode node : array) {
             Schema unionType = parse(node, names);
@@ -44,12 +53,6 @@ public class UnionSchema extends UnnamedSchema {
                 throw new SchemaParseException("Invalid JSON in union" + node);
             }
 
-            String name = unionType.getName();
-            if (uniqueSchemas.containsKey(name)) {
-                throw new SchemaParseException("Duplicate type in union: " + name);
-            }
-
-            uniqueSchemas.put(name, name);
             schemas.add(unionType);
         }
 

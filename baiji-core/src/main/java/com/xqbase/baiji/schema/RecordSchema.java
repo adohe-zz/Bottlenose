@@ -102,7 +102,7 @@ public class RecordSchema extends NamedSchema implements Iterable<Field> {
             if (fieldTypeNode.isTextual()) {
 
             }
-            Schema fieldSchema = parse(fieldsNode, names);
+            Schema fieldSchema = parse(fieldTypeNode, names);
             Field.SortOrder order = Field.SortOrder.ASCENDING;
             JsonNode orderNode = field.get("order");
             if (orderNode != null)
