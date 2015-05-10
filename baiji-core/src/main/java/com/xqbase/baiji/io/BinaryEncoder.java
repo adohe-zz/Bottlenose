@@ -19,6 +19,31 @@ public abstract class BinaryEncoder implements Encoder {
         this.writeBytes(utf8.getBytes(), 0, utf8.getByteLength());
     }
 
+    /**
+     * Write a Unicode character string.  The default implementation converts
+     * the String to a {@link com.xqbase.baiji.util.Utf8}.  Some Encoder
+     * implementations may want to do something different as a performance optimization.
+     * @throws com.xqbase.baiji.exceptions.BaijiTypeException If this is a stateful writer and a
+     * char-string is not expected
+     */
+    public void writeString(String str) throws IOException {
+        writeString(new Utf8(str));
+    }
+
+    /**
+     * Write a Unicode character string.  If the CharSequence is an
+     * {@link com.xqbase.baiji.util.Utf8} it writes this directly, otherwise
+     * the CharSequence is converted to a String via toString() and written.
+     * @throws com.xqbase.baiji.exceptions.BaijiTypeException If this is a
+     * stateful writer and a char-string is not expected
+     */
+    public void writeString(CharSequence charSequence) throws IOException {
+        if (charSequence instanceof Utf8)
+            writeString((Utf8)charSequence);
+        else
+            writeString(charSequence.toString());
+    }
+
     @Override
     public void writeBytes(byte[] bytes, int start, int len) throws IOException {
         if (0 == len) {
@@ -26,7 +51,18 @@ public abstract class BinaryEncoder implements Encoder {
             return;
         }
         this.writeInt(len);
-        this.writeBytes(bytes, start, len);
+        this.writeFixed(bytes, start, len);
+    }
+
+    /**
+     * Writes a byte string.
+     * Equivalent to <tt>writeBytes(bytes, 0, bytes.length)</tt>
+     * @throws IOException
+     * @throws com.xqbase.baiji.exceptions.BaijiTypeException If
+     * this is a stateful writer and a byte-string is not expected
+     */
+    public void writeBytes(byte[] bytes) throws IOException {
+        writeBytes(bytes, 0, bytes.length);
     }
 
     @Override

@@ -42,6 +42,11 @@ public class DirectBinaryEncoder extends BinaryEncoder {
         out.write(b ? 1 : 0);
     }
 
+    /**
+     * Buffering is slower for int that encode to just 1 or
+     * two bytes, and are faster for large ones.
+     * @throws IOException
+     */
     @Override
     public void writeInt(int n) throws IOException { // variable length, zigzag encoding
         // move sign to low-order bit, and flip others if negative
@@ -58,6 +63,11 @@ public class DirectBinaryEncoder extends BinaryEncoder {
         out.write(buf, 0, len);
     }
 
+    /**
+     * Buffering is slower for writeLong when the number is small enough to
+     * fit in an int.
+     * @throws IOException
+     */
     @Override
     public void writeLong(long n) throws IOException {
         // move sign to low-order bit
@@ -75,24 +85,38 @@ public class DirectBinaryEncoder extends BinaryEncoder {
         out.write(buf, 0, len);
     }
 
+    /**
+     * Buffering is faster for writeFloat.
+     * @throws IOException
+     */
     @Override
     public void writeFloat(float f) throws IOException {
-
+        // a float is written as four bytes
+        int len = BinaryData.encodeFloat(f, buf, 0);
+        out.write(buf, 0, len);
     }
 
+    /**
+     * Buffering is faster for writeDouble.
+     * @throws IOException
+     */
     @Override
     public void writeDouble(double d) throws IOException {
-
+        // a double is written as eight bytes
+        byte[] buf = new byte[8];
+        int len = BinaryData.encodeDouble(d, buf, 0);
+        out.write(buf, 0, len);
     }
 
     @Override
-    public void writeBytes(byte[] bytes) throws IOException {
-
+    public void writeFixed(byte[] bytes, int start, int len) throws IOException {
+        out.write(bytes, start, len);
     }
 
     @Override
     public void writeDatetime(Calendar date) throws IOException {
-
+        // a date is written as long type
+        writeLong(date.getTimeInMillis());
     }
 
     @Override

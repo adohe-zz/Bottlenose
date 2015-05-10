@@ -35,7 +35,7 @@ public interface Encoder extends Flushable {
      * @throws BaijiTypeException If this is a stateful writer and a
      *                            null is not expected
      */
-    public void writeNull() throws IOException;
+    void writeNull() throws IOException;
 
     /**
      * Write a boolean value.
@@ -43,7 +43,7 @@ public interface Encoder extends Flushable {
      * @throws BaijiTypeException If this is a stateful writer and a
      *                            boolean is not expected
      */
-    public void writeBoolean(boolean b) throws IOException;
+    void writeBoolean(boolean b) throws IOException;
 
     /**
      * Writes a 32-bit integer.
@@ -51,7 +51,7 @@ public interface Encoder extends Flushable {
      * @throws BaijiTypeException If this is a stateful writer and an
      *                            integer is not expected
      */
-    public void writeInt(int n) throws IOException;
+    void writeInt(int n) throws IOException;
 
     /**
      * Write a 64-bit integer.
@@ -59,7 +59,7 @@ public interface Encoder extends Flushable {
      * @throws BaijiTypeException If this is a stateful writer and a
      *                            long is not expected
      */
-    public void writeLong(long n) throws IOException;
+    void writeLong(long n) throws IOException;
 
     /**
      * Write a float.
@@ -68,7 +68,7 @@ public interface Encoder extends Flushable {
      * @throws BaijiTypeException If this is a stateful writer and a
      *                            float is not expected
      */
-    public void writeFloat(float f) throws IOException;
+    void writeFloat(float f) throws IOException;
 
     /**
      * Write a double.
@@ -76,7 +76,7 @@ public interface Encoder extends Flushable {
      * @throws BaijiTypeException If this is a stateful writer and a
      *                            double is not expected
      */
-    public void writeDouble(double d) throws IOException;
+    void writeDouble(double d) throws IOException;
 
     /**
      * Write a Unicode character string.  The default implementation converts
@@ -86,24 +86,26 @@ public interface Encoder extends Flushable {
      * @throws BaijiTypeException If this is a stateful writer and a
      *                            char-string is not expected
      */
-    public void writeString(Utf8 str) throws IOException;
-
-    /**
-     * Writes a byte string.
-     * Equivalent to <tt>writeBytes(bytes, 0, bytes.length)</tt>
-     *
-     * @throws java.io.IOException
-     * @throws BaijiTypeException If this is a stateful writer and a
-     *                            byte-string is not expected
-     */
-    public void writeBytes(byte[] bytes) throws IOException;
+    void writeString(Utf8 str) throws IOException;
 
     /**
      * Write a byte string.
      * @throws BaijiTypeException If this is a stateful writer and a
      * byte-string is not expected
      */
-    public abstract void writeBytes(byte[] bytes, int start, int len) throws IOException;
+    void writeBytes(byte[] bytes, int start, int len) throws IOException;
+
+    /**
+     * Writes a fixed size binary object.
+     * @param bytes The contents to write
+     * @param start The position within <tt>bytes</tt> where the contents
+     * start.
+     * @param len The number of bytes to write.
+     * @throws BaijiTypeException If this is a stateful writer and a
+     * byte-string is not expected
+     * @throws IOException
+     */
+    void writeFixed(byte[] bytes, int start, int len) throws IOException;
 
     /**
      * Write a date
@@ -112,7 +114,7 @@ public interface Encoder extends Flushable {
      * @throws BaijiTypeException If this is a stateful writer and a
      *                            date is not expected
      */
-    public void writeDatetime(Calendar date) throws IOException;
+    void writeDatetime(Calendar date) throws IOException;
 
     /**
      * Writes an enumeration.
@@ -122,7 +124,7 @@ public interface Encoder extends Flushable {
      *                            is not expected or the <tt>e</tt> is out of range.
      * @throws java.io.IOException
      */
-    public void writeEnum(int e) throws IOException;
+    void writeEnum(int e) throws IOException;
 
     /**
      * Call this method to start writing an array.
@@ -154,7 +156,7 @@ public interface Encoder extends Flushable {
      * @throws BaijiTypeException If this is a stateful writer and an
      *                            array is not expected
      */
-    public void writeArrayStart() throws IOException;
+    void writeArrayStart() throws IOException;
 
     /**
      * Call this method before writing a batch of items in an array or a map.
@@ -167,7 +169,7 @@ public interface Encoder extends Flushable {
      * @param itemCount The number of {@link #startItem()} calls to follow.
      * @throws java.io.IOException
      */
-    public void setItemCount(long itemCount) throws IOException;
+    void setItemCount(long itemCount) throws IOException;
 
     /**
      * Start a new item of an array or map.
@@ -175,7 +177,7 @@ public interface Encoder extends Flushable {
      *
      * @throws BaijiTypeException If called outside of an array or map context
      */
-    public void startItem() throws IOException;
+    void startItem() throws IOException;
 
     /**
      * Call this method to finish writing an array.
@@ -185,7 +187,7 @@ public interface Encoder extends Flushable {
      *                            provided to {@link #writeArrayStart}
      * @throws BaijiTypeException If not currently inside an array
      */
-    public void writeArrayEnd() throws IOException;
+    void writeArrayEnd() throws IOException;
 
     /**
      * Call this to start a new map.  See
@@ -209,7 +211,7 @@ public interface Encoder extends Flushable {
      * @throws BaijiTypeException If this is a stateful writer and a
      *                            map is not expected
      */
-    public void writeMapStart() throws IOException;
+    void writeMapStart() throws IOException;
 
     /**
      * Call this method to terminate the inner-most, currently-opened
@@ -219,7 +221,7 @@ public interface Encoder extends Flushable {
      *                            provided to {@link #writeMapStart}
      * @throws BaijiTypeException If not currently inside a map
      */
-    public void writeMapEnd() throws IOException;
+    void writeMapEnd() throws IOException;
 
     /**
      * Call this method to write the tag of a union.
@@ -236,6 +238,6 @@ public interface Encoder extends Flushable {
      * @throws BaijiTypeException If this is a stateful writer and a
      *                            map is not expected
      */
-    public void writeUnionIndex(int unionIndex) throws IOException;
+    void writeUnionIndex(int unionIndex) throws IOException;
 }
 
