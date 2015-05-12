@@ -49,31 +49,6 @@ public class RecordSchema extends NamedSchema implements Iterable<Field> {
     }
 
     /**
-     * Constructor for the record schema
-     *
-     * @param name          name of the record schema
-     * @param doc           the schema doc
-     * @param aliases       set of aliases for the record name
-     * @param props         the schema properties map
-     * @param fields        list of fields for the record
-     * @param request       true if this is an anonymous record with 'request' instead of 'fields'
-     * @param fieldMap      map of field names and field objects
-     * @param fieldAliasMap map of field aliases and field objects
-     * @param names         list of named schema already read
-     */
-    private RecordSchema(SchemaName name, String doc, Set<String> aliases, PropertyMap props,
-                         List<Field> fields, boolean request, Map<String, Field> fieldMap,
-                         Map<String, Field> fieldAliasMap, SchemaNames names) {
-        super(SchemaType.RECORD, name, doc, aliases, props, names);
-        if (!request && name.getName() == null) {
-            throw new SchemaParseException("name cannot be null for record schema.");
-        }
-        this.fields = fields;
-        this.fieldLookup = fieldMap;
-        this.fieldAliasLookup = fieldAliasMap;
-    }
-
-    /**
      * Static function to return new instance of the record schema
      *
      * @param node     JSON object for the record schema
@@ -130,6 +105,13 @@ public class RecordSchema extends NamedSchema implements Iterable<Field> {
             throw new SchemaParseException("field or alias " + name + " is a duplicate name");
         }
         map.put(lowerCaseName, field);
+    }
+
+    /**
+     * Get fields list size.
+     */
+    public int size() {
+        return fields.size();
     }
 
     @Override
