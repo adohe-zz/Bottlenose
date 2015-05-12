@@ -1,7 +1,6 @@
 package com.xqbase.baiji.schema;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.DoubleNode;
 
 import java.util.*;
@@ -108,10 +107,10 @@ public class RecordSchema extends NamedSchema implements Iterable<Field> {
     }
 
     /**
-     * Get fields list size.
+     * Get fields list.
      */
-    public int size() {
-        return fields.size();
+    public List<Field> getFields() {
+        return fields;
     }
 
     @Override
