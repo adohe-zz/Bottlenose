@@ -3,10 +3,13 @@ package com.xqbase.baiji.generic;
 import com.xqbase.baiji.exceptions.BaijiRuntimeException;
 import com.xqbase.baiji.io.DatumWriter;
 import com.xqbase.baiji.io.Encoder;
+import com.xqbase.baiji.schema.Field;
+import com.xqbase.baiji.schema.RecordSchema;
 import com.xqbase.baiji.schema.Schema;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A general purpose writer of data from Baiji streams. This writer analyzes the writer schema
@@ -19,6 +22,7 @@ public class PresolvingDatumWriter<T> implements DatumWriter<T> {
 
     private final Schema schema;
     private final ItemWriter itemWriter;
+    private final ConcurrentHashMap<RecordSchema, ItemWriter> recordWriters = new ConcurrentHashMap<>();
 
     protected PresolvingDatumWriter(Schema schema) {
         this.schema = schema;
@@ -27,7 +31,7 @@ public class PresolvingDatumWriter<T> implements DatumWriter<T> {
 
     @Override
     public Schema getSchema() {
-        return null;
+        return schema;
     }
 
     @Override
@@ -35,10 +39,77 @@ public class PresolvingDatumWriter<T> implements DatumWriter<T> {
 
     }
 
+    private ItemWriter resolveWriter(Schema schema) {
+        switch (schema.getType()) {
+            case NULL:
+            case RECORD:
+                return resolveRecord((RecordSchema) schema);
+            default:
+                return null;
+        }
+    }
+
     protected static interface ItemWriter {
         void write(Object value, Encoder encoder) throws IOException;
     }
 
+    /**
+     * Serialized a record using the given RecordSchema. It uses GetField method
+     * to extract the field value from the given object.
+     *
+     * @param recordSchema The RecordSchema to use for serialization
+     */
+    private ItemWriter resolveRecord(RecordSchema recordSchema) {
+        ItemWriter recordWriter = recordWriters.get(recordSchema);
+        if (recordWriter != null) {
+            return recordWriter;
+        }
+
+        RecordFieldWriter[] writeSteps = new RecordFieldWriter[recordSchema.size()];
+        recordWriter = new RecordFieldsWriter(writeSteps);
+        recordWriters.putIfAbsent(recordSchema, recordWriter);
+
+        int index = 0;
+        for (Field field : recordSchema) {
+            RecordFieldWriter record = new RecordFieldWriter(resolveWriter(field.getSchema()),
+                    field);
+            writeSteps[index++] = record;
+        }
+
+        return recordWriter;
+    }
+
+    protected static class RecordFieldWriter {
+
+        public ItemWriter fieldWriter;
+        public Field field;
+
+        public RecordFieldWriter(ItemWriter fieldWriter, Field field) {
+            this.fieldWriter = fieldWriter;
+            this.field = field;
+        }
+    }
+
+    private class RecordFieldsWriter implements ItemWriter {
+
+        private final RecordFieldWriter[] fieldWriters;
+
+        public RecordFieldsWriter(RecordFieldWriter[] fieldWriters) {
+            this.fieldWriters = fieldWriters;
+        }
+
+        @Override
+        public void write(Object value, Encoder encoder) throws IOException {
+        }
+    }
+
+    private static class NullWriter implements ItemWriter {
+
+        @Override
+        public void write(Object value, Encoder encoder) throws IOException {
+            encoder.writeNull();
+        }
+    }
     protected static BaijiRuntimeException typeMismatch(Object obj, String schemaType, String type) {
         return new BaijiRuntimeException(type + " required to write against " + schemaType + " schema but found " +
                 (null == obj ? "null" : obj.getClass().toString()));
