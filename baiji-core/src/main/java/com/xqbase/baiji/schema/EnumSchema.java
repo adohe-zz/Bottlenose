@@ -65,6 +65,10 @@ public class EnumSchema extends NamedSchema implements Iterable<String> {
         return new EnumSchema(name, doc, aliases, symbols, props, names);
     }
 
+    public int getEnumOrdinal(String symbol) {
+        return ordinals.get(symbol);
+    }
+
     @Override
     public Iterator<String> iterator() {
         return null;
