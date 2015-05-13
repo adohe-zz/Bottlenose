@@ -1,14 +1,13 @@
 package com.xqbase.baiji.generic;
 
+import com.xqbase.baiji.exceptions.BaijiTypeException;
 import com.xqbase.baiji.io.DatumWriter;
 import com.xqbase.baiji.io.Encoder;
 import com.xqbase.baiji.schema.*;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.Map;
+import java.nio.ByteBuffer;
+import java.util.*;
 
 /**
  * {@link com.xqbase.baiji.io.DatumWriter} for generic Java objects.
@@ -48,7 +47,7 @@ public abstract class GenericDatumWriter<D> implements DatumWriter<D> {
 
     @Override
     public void write(D datum, Encoder out) throws IOException {
-
+        write(schema, datum, out);
     }
 
     protected void write(Schema schema, Object datum, Encoder out)
@@ -71,9 +70,34 @@ public abstract class GenericDatumWriter<D> implements DatumWriter<D> {
                     writeString(schema, datum, out);
                     break;
                 case BYTES:
+                    writeBytes(schema, datum, out);
+                    break;
+                case INT:
+                    out.writeInt(((Number) datum).intValue());
+                    break;
+                case LONG:
+                    out.writeLong((Long) datum);
+                    break;
+                case FLOAT:
+                    out.writeFloat((Float) datum);
+                    break;
+                case DOUBLE:
+                    out.writeDouble((Double) datum);
+                    break;
+                case DATETIME:
+                    out.writeDatetime((Calendar) datum);
+                    break;
+                case BOOLEAN:
+                    out.writeBoolean((Boolean) datum);
+                    break;
+                case NULL:
+                    out.writeNull();
+                    break;
+                default:
+                    error(schema, datum);
             }
         } catch (NullPointerException e) {
-
+            throw npe(e, " of " + schema.getName());
         }
     }
 
@@ -200,8 +224,14 @@ public abstract class GenericDatumWriter<D> implements DatumWriter<D> {
         out.writeString((CharSequence) datum);
     }
 
-    protected void writeBytes(Schema schema, Object datum, Encoder out) {
-
+    /**
+     * Called to write a bytes. May be overridden by alternate bytes representation.
+     */
+    protected void writeBytes(Schema schema, Object datum, Encoder out) throws IOException {
+        out.writeBytes((ByteBuffer) datum);
     }
 
+    private void error(Schema schema, Object datum) {
+        throw new BaijiTypeException("Not a" + schema + ": " + datum);
+    }
 }
