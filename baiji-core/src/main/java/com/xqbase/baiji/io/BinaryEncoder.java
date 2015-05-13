@@ -3,6 +3,7 @@ package com.xqbase.baiji.io;
 import com.xqbase.baiji.util.Utf8;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * An abstract {@link Encoder} for Baiji's binary encoding.
@@ -52,6 +53,25 @@ public abstract class BinaryEncoder implements Encoder {
      */
     public void writeBytes(byte[] bytes) throws IOException {
         writeBytes(bytes, 0, bytes.length);
+    }
+
+    @Override
+    public void writeBytes(ByteBuffer bytes) throws IOException {
+        int len = bytes.limit() - bytes.remaining();
+        if (len == 0) {
+            writeZero();
+        } else {
+            writeInt(len);
+            int pos = bytes.position();
+            int l = bytes.limit() - pos;
+            if (bytes.hasArray()) {
+                writeFixed(bytes.array(), bytes.arrayOffset() + pos, l);
+            } else {
+                byte[] b = new byte[l];
+                bytes.duplicate().get(b, 0, l);
+                writeFixed(b, 0, l);
+            }
+        }
     }
 
     @Override

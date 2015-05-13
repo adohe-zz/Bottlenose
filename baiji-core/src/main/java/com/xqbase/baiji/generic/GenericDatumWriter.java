@@ -70,6 +70,7 @@ public abstract class GenericDatumWriter<D> implements DatumWriter<D> {
                 case STRING:
                     writeString(schema, datum, out);
                     break;
+                case BYTES:
             }
         } catch (NullPointerException e) {
 
@@ -198,4 +199,9 @@ public abstract class GenericDatumWriter<D> implements DatumWriter<D> {
     protected void writeString(Object datum, Encoder out) throws IOException {
         out.writeString((CharSequence) datum);
     }
+
+    protected void writeBytes(Schema schema, Object datum, Encoder out) {
+
+    }
+
 }
