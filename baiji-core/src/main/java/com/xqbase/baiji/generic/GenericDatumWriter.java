@@ -32,6 +32,12 @@ public abstract class GenericDatumWriter<D> implements DatumWriter<D> {
         setSchema(schema);
     }
 
+    public GenericDatumWriter(Schema schema, GenericData data) {
+        this.data = data;
+        setSchema(schema);
+    }
+
+    @Override
     public void setSchema(Schema schema) {
         this.schema = schema;
     }

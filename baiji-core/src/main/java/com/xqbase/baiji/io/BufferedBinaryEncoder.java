@@ -4,6 +4,7 @@ import com.xqbase.baiji.util.Utf8;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.Calendar;
 
 /**
@@ -79,13 +80,27 @@ public class BufferedBinaryEncoder implements Encoder {
     }
 
     @Override
-    public void writeBytes(byte[] value) throws IOException {
-        writeLong(value.length);
-        doWriteBytes(value);
+    public void writeString(String str) throws IOException {
+
+    }
+
+    @Override
+    public void writeString(CharSequence charSequence) throws IOException {
+
     }
 
     @Override
     public void writeBytes(byte[] bytes, int start, int len) throws IOException {
+
+    }
+
+    @Override
+    public void writeBytes(ByteBuffer bytes) throws IOException {
+
+    }
+
+    @Override
+    public void writeFixed(byte[] bytes, int start, int len) throws IOException {
 
     }
 
