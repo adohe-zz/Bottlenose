@@ -5,6 +5,7 @@ import com.xqbase.baiji.util.Utf8;
 
 import java.io.Flushable;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Calendar;
 
 /**
@@ -112,6 +113,13 @@ public interface Encoder extends Flushable {
      * byte-string is not expected
      */
     void writeBytes(byte[] bytes, int start, int len) throws IOException;
+
+    /**
+     * Write a byte string.
+     * @throws BaijiTypeException If this is a stateful writer and a
+     * byte-string is not expected
+     */
+    void writeBytes(ByteBuffer bytes) throws IOException;
 
     /**
      * Writes a fixed size binary object.
