@@ -25,6 +25,15 @@ public abstract class BinaryEncoder implements Encoder {
     }
 
     @Override
+    public void writeString(CharSequence charSequence) throws IOException {
+        if (charSequence instanceof Utf8) {
+            writeString((Utf8) charSequence);
+        } else {
+            writeString(charSequence.toString());
+        }
+    }
+
+    @Override
     public void writeBytes(byte[] bytes, int start, int len) throws IOException {
         if (0 == len) {
             writeZero();

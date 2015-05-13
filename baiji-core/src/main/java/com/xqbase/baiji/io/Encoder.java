@@ -98,6 +98,15 @@ public interface Encoder extends Flushable {
     void writeString(String str) throws IOException;
 
     /**
+     * Write a Unicode character string. If the CharSequence is an
+     * {@link com.xqbase.baiji.util.Utf8} it writes it directly, otherwise
+     * the CharSequence is converted to a String via toString() and written.
+     * @throws BaijiTypeException If this is a stateful writer and a
+     * char-string is not expected
+     */
+    void writeString(CharSequence charSequence) throws IOException;
+
+    /**
      * Write a byte string.
      * @throws BaijiTypeException If this is a stateful writer and a
      * byte-string is not expected
