@@ -37,6 +37,10 @@ public class MapSchema extends UnnamedSchema {
         return new MapSchema(parse(valuesNode, names), props);
     }
 
+    public Schema getValueSchema() {
+        return valueSchema;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

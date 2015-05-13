@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * {@link com.xqbase.baiji.io.DatumWriter} for generic Java objects.
@@ -61,7 +62,14 @@ public abstract class GenericDatumWriter<D> implements DatumWriter<D> {
                     writeEnum((EnumSchema) schema, datum, out);
                     break;
                 case ARRAY:
-
+                    writeArray((ArraySchema) schema, datum, out);
+                    break;
+                case MAP:
+                    writeMap((MapSchema) schema, datum, out);
+                    break;
+                case STRING:
+                    writeString(schema, datum, out);
+                    break;
             }
         } catch (NullPointerException e) {
 
@@ -134,5 +142,60 @@ public abstract class GenericDatumWriter<D> implements DatumWriter<D> {
     @SuppressWarnings("unchecked")
     protected Iterator<?> getArrayElements(Object array) {
         return ((Collection) array).iterator();
+    }
+
+    /**
+     * Called to write a map. May be overridden by alternate map representations.
+     */
+    protected void writeMap(MapSchema mapSchema, Object datum, Encoder out) throws IOException {
+        Schema valueSchema = mapSchema.getValueSchema();
+        long size = getMapSize(datum);
+        long actualSize = 0;
+        out.setItemCount(size);
+        out.writeMapStart();
+        for (Map.Entry<String, Object> entry : getMapEntry(datum)) {
+            out.startItem();
+            out.writeString(entry.getKey());
+            write(valueSchema, entry.getValue(), out);
+            actualSize ++;
+        }
+        out.writeMapEnd();
+
+        if (actualSize != size) {
+            throw new ConcurrentModificationException("Size of map written was " +
+                    size + " , but number of elements written was " + actualSize);
+        }
+    }
+
+    /**
+     * Called by the default implementation of {@link #writeMap} to get size
+     * of a map.
+     */
+    @SuppressWarnings("unchecked")
+    protected long getMapSize(Object map) {
+        return ((Map) map).size();
+    }
+
+    /**
+     * Called by the default implementation of {@link #writeMap} to get
+     * entry set of a map.
+     */
+    @SuppressWarnings("unchecked")
+    protected Iterable<Map.Entry<String, Object>> getMapEntry(Object map) {
+        return ((Map) map).entrySet();
+    }
+
+    /**
+     * Called to write a string. May be overridden by alternate string representation.
+     */
+    protected void writeString(Schema schema, Object datum, Encoder out) throws IOException {
+        writeString(datum, out);
+    }
+
+    /**
+     * Called to write a string. May be overridden by alternate string representation.
+     */
+    protected void writeString(Object datum, Encoder out) throws IOException {
+        out.writeString((CharSequence) datum);
     }
 }

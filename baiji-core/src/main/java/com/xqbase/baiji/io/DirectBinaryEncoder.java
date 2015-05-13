@@ -69,7 +69,7 @@ public class DirectBinaryEncoder extends BinaryEncoder {
      * @throws IOException
      */
     @Override
-    public void writeLong(long n) throws IOException {
+    public void writeLong(long n) throws IOException { // variable length, zigzag encoding
         // move sign to low-order bit
         long val = (n << 1) ^ (n >> 63);
         if ((val & ~0x7FFFFFFFL) == 0) {
