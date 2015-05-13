@@ -13,9 +13,9 @@ import java.io.IOException;
 public interface DatumWriter<D> {
 
     /**
-     * Get the schema.
+     * Set the schema.
      */
-    Schema getSchema();
+    void setSchema(Schema schema);
 
     /**
      * Write a datum.  Traverse the schema, depth first, writing each leaf value
