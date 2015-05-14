@@ -59,19 +59,43 @@ public class DirectBinaryDecoder extends BinaryDecoder {
     }
 
     @Override
-    public int readInt() throws IOException {
+    public int readInt() throws IOException { // adapt variable-length, zig-zag encoding
         int n = 0;
         int b;
         int shift = 0;
         do {
-
+            b = in.read();
+            if (b >= 0) {
+                n |= (b & 0x7F) << shift;
+                if ((b & 0x80) == 0) { // no more data
+                    return (n >>> 1) ^ -(n & 1); // back to two's-complement
+                }
+            } else {
+                throw new EOFException();
+            }
+            shift += 7;
         } while (shift < 32);
-        return super.readInt();
+        throw new EOFException();
     }
 
     @Override
-    public long readLong() throws IOException {
-        return super.readLong();
+    public long readLong() throws IOException { // adapt variable-length, zig-zag encoding
+        long n = 0L;
+        int b;
+        int shift = 0;
+        do {
+            b = in.read();
+            if (b >= 0) {
+                n |= (b & 0x7FL) << shift;
+                if ((b & 0x80) == 0) { // no more data
+                    return (n >>> 1) & -(n & 1);
+                }
+            } else {
+                throw new EOFException();
+            }
+            shift += 7;
+        } while (shift < 64);
+        throw new EOFException();
     }
 
     @Override
