@@ -1,5 +1,7 @@
 package com.xqbase.baiji.io;
 
+import com.xqbase.baiji.exceptions.BaijiRuntimeException;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -35,7 +37,13 @@ public class BufferedBinaryEncoder extends BinaryEncoder {
         }
 
         if (this.sink != null) {
-
+            if (pos > 0) {
+                try {
+                    flushBuffer();
+                } catch (IOException e) {
+                    throw new BaijiRuntimeException("Failure flushing old output", e);
+                }
+            }
         }
 
         this.sink = new OutputStreamSink(out);
@@ -78,12 +86,19 @@ public class BufferedBinaryEncoder extends BinaryEncoder {
 
     @Override
     protected void writeZero() throws IOException {
+        writeByte(0);
+    }
 
+    private void writeByte(int n) throws IOException {
+        if (pos == buf.length) {
+            flushBuffer();
+        }
+        buf[pos ++] = (byte)(n & 0xFF);
     }
 
     @Override
     public int bytesBuffered() {
-        return 0;
+        return pos;
     }
 
     @Override
@@ -91,6 +106,7 @@ public class BufferedBinaryEncoder extends BinaryEncoder {
         if (buf.length == pos) {
             flushBuffer();
         }
+        pos += BinaryData.encodeBoolean(b, buf, pos);
     }
 
     @Override
@@ -119,12 +135,22 @@ public class BufferedBinaryEncoder extends BinaryEncoder {
 
     @Override
     public void writeFixed(byte[] bytes, int start, int len) throws IOException {
-
+        if (len > bulkLimit) {
+            // too big, write direct
+            flushBuffer();
+            sink.innerWrite(bytes, start, len);
+            return;
+        }
+        ensureBounds(len);
+        System.arraycopy(bytes, start, buf, pos, len);
+        pos += len;
     }
 
     @Override
     public void writeDatetime(Calendar date) throws IOException {
-
+        // write datetime as long
+        ensureBounds(10);
+        pos += BinaryData.encodeLong(date.getTimeInMillis(), buf, pos);
     }
 
     @Override

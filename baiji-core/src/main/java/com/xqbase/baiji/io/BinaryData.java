@@ -5,7 +5,16 @@ package com.xqbase.baiji.io;
  */
 public class BinaryData {
 
-    private BinaryData() {
+    private BinaryData() {}
+
+    /**
+     * Encode a boolean to the byte array at the given position. Will throw
+     * IndexOutOfBounds if the position is not valid.
+     * @return the number of bytes written to the byte array.
+     */
+    public static int encodeBoolean(boolean b, byte[] buf, int pos) {
+        buf[pos] = b ? (byte)1 : (byte)0;
+        return 1;
     }
 
     /** Encode an integer to the byte array at the given position. Will throw
