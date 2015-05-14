@@ -1,6 +1,9 @@
 package com.xqbase.baiji.io;
 
+import com.xqbase.baiji.util.Utf8;
+
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Calendar;
 
 /**
@@ -15,6 +18,7 @@ import java.util.Calendar;
  */
 
 public class BinaryDecoder implements Decoder {
+
 
     protected BinaryDecoder() {}
 
@@ -51,6 +55,26 @@ public class BinaryDecoder implements Decoder {
     @Override
     public byte[] readBytes() throws IOException {
         return new byte[0];
+    }
+
+    @Override
+    public ByteBuffer readBytes(ByteBuffer old) throws IOException {
+        return null;
+    }
+
+    @Override
+    public void readFixed(byte[] bytes, int start, int length) throws IOException {
+
+    }
+
+    @Override
+    public void readFixed(byte[] bytes) throws IOException {
+
+    }
+
+    @Override
+    public String readString(Utf8 old) throws IOException {
+        return null;
     }
 
     /**
