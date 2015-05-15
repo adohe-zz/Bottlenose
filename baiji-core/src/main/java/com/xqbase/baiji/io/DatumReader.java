@@ -1,5 +1,7 @@
 package com.xqbase.baiji.io;
 
+import com.xqbase.baiji.schema.Schema;
+
 import java.io.IOException;
 
 /** Read data of a schema.
