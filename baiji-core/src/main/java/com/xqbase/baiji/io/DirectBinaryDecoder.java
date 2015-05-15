@@ -5,6 +5,7 @@ import com.xqbase.baiji.util.ByteBufferInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 /**
  * A non-buffering version of {@link BinaryDecoder}.
@@ -41,6 +42,18 @@ public class DirectBinaryDecoder extends BinaryDecoder {
 
     private class ByteReader {
 
+        public ByteBuffer read(ByteBuffer old, int length) throws IOException {
+            ByteBuffer result;
+            if (old != null && length <= old.capacity()) {
+                result = old;
+                result.clear();
+            } else {
+                result = ByteBuffer.allocate(length);
+            }
+            doReadBytes(result.array(), result.position(), length);
+            result.limit(length);
+            return result;
+        }
     }
 
     private class ReuseByteReader extends ByteReader {
@@ -126,9 +139,9 @@ public class DirectBinaryDecoder extends BinaryDecoder {
     }
 
     @Override
-    public byte[] readBytes() throws IOException {
+    public ByteBuffer readBytes(ByteBuffer old) throws IOException {
         int length = readInt();
-        return super.readBytes();
+        return byteReader.read(old, length);
     }
 
     @Override
