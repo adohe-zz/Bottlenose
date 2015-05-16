@@ -58,11 +58,16 @@ project(':baiji-core') {
     }
 }
 
+project(':baiji-common') {
+
+}
+
 project(':baiji-rpc-message') {
 }
 
 project(':baiji-rpc-transport') {
     dependencies {
+        compile project(':baiji-common')
         compile project(':baiji-rpc-message')
         compile 'io.netty:netty-all:5.0.0.Alpha2'
     }
