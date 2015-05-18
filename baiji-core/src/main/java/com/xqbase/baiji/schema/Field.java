@@ -86,6 +86,7 @@ public class Field {
     public Set<String> getAliases() {
         return aliases;
     }
+
     public SortOrder getOrdering() {
         return ordering;
     }
@@ -93,4 +94,6 @@ public class Field {
     public Schema getSchema() {
         return schema;
     }
+
+    public JsonNode getDefaultValue() { return defaultValue; }
 }
