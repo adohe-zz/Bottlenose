@@ -1,8 +1,12 @@
 package com.xqbase.baiji.io.parsing;
 
 import com.xqbase.baiji.exceptions.BaijiTypeException;
+import com.xqbase.baiji.schema.Field;
+import com.xqbase.baiji.schema.RecordSchema;
 import com.xqbase.baiji.schema.Schema;
 import com.xqbase.baiji.schema.SchemaType;
+
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,8 +52,34 @@ public class BinaryGrammarGenerator extends ValidatingGrammarGenerator {
                 return Symbol.BYTES;
             case DATETIME:
                 return Symbol.DATETIME;
+            case RECORD:
+                return resolveRecord((RecordSchema) schema, seen);
             default:
                 throw new BaijiTypeException("unknown type: " + type);
         }
+    }
+
+    private Symbol resolveRecord(RecordSchema recordSchema, Map<LitS, Symbol> seen) {
+        LitS wsc = new LitS(recordSchema);
+        Symbol result = seen.get(wsc);
+        if (null == result) {
+            List<Field> fields = recordSchema.getFields();
+            int count = fields.size() + 1;
+
+            Symbol[] production = new Symbol[count];
+            production[--count] = Symbol.fieldOrderAction(fields.toArray(new Field[fields.size()]));
+
+            /**
+             * We construct a symbol without filling the array. Please see
+             * {@link Symbol#production} for the reason.
+             */
+            result = Symbol.seq(production);
+            seen.put(wsc, result);
+
+            for (Field f : fields) {
+                generate(f.getSchema(), seen);
+            }
+        }
+        return result;
     }
 }
