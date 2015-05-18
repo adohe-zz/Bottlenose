@@ -1,6 +1,5 @@
 package com.xqbase.baiji.schema;
 
-import com.xqbase.baiji.exceptions.BaijiTypeException;
 import com.xqbase.baiji.util.ObjectUtil;
 import org.codehaus.jackson.JsonNode;
 
@@ -16,7 +15,7 @@ public class ArraySchema extends UnnamedSchema {
 
     protected ArraySchema(Schema itemSchema, PropertyMap propertyMap) {
         super(SchemaType.ARRAY, propertyMap);
-        if (itemSchema == null) {
+        if (null == itemSchema) {
             throw new IllegalArgumentException("Array Item Schema can't be null");
         }
         this.itemSchema = itemSchema;
