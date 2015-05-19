@@ -49,6 +49,7 @@ public class BinaryGrammarGenerator extends ValidatingGrammarGenerator {
                 return Symbol.BYTES;
             case DATETIME:
                 return Symbol.DATETIME;
+            case ENUM:
             case RECORD:
                 return resolveRecord((RecordSchema) schema, seen);
             case UNION:
