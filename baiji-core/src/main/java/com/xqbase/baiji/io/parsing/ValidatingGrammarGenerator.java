@@ -107,8 +107,11 @@ public class ValidatingGrammarGenerator {
          * the same (not merely equal).
          */
         public boolean equals(Object o) {
+            if (o == this) return true;
             if (!(o instanceof LitS)) return false;
-            return actual == ((LitS)o).actual;
+
+            LitS that = (LitS) o;
+            return actual == that.actual;
         }
 
         public int hashCode() {

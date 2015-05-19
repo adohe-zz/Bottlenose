@@ -12,7 +12,6 @@ public class ArraySchema extends UnnamedSchema {
 
     private final Schema itemSchema;
 
-
     protected ArraySchema(Schema itemSchema, PropertyMap propertyMap) {
         super(SchemaType.ARRAY, propertyMap);
         if (null == itemSchema) {
@@ -28,7 +27,7 @@ public class ArraySchema extends UnnamedSchema {
     public static ArraySchema newInstance(JsonNode node, PropertyMap propMap,
                     SchemaNames names) {
         JsonNode itemsNode = node.get("items");
-        if (itemsNode == null) {
+        if (null == itemsNode) {
             throw new SchemaParseException("Array has no items type: " + node);
         }
 

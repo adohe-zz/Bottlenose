@@ -15,7 +15,7 @@ public class MapSchema extends UnnamedSchema {
 
     protected MapSchema(Schema valueSchema, PropertyMap propertyMap) {
         super(SchemaType.ARRAY, propertyMap);
-        if (valueSchema == null)
+        if (null == valueSchema)
             throw new IllegalArgumentException("Map value schema can't be null");
         this.valueSchema = valueSchema;
     }
@@ -30,7 +30,7 @@ public class MapSchema extends UnnamedSchema {
      */
     public static MapSchema newInstance(JsonNode mapNode, PropertyMap props, SchemaNames names) {
         JsonNode valuesNode = mapNode.get("values");
-        if (valuesNode == null) {
+        if (null == valuesNode) {
             throw new BaijiTypeException("Map has no values type: " + mapNode);
         }
 

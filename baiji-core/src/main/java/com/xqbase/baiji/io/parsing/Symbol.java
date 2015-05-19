@@ -28,7 +28,7 @@ public abstract class Symbol {
         EXPLICIT_ACTION
     }
 
-    /// The kind of this symbol.
+    // The kind of this symbol.
     public final Kind kind;
 
     /**
@@ -38,6 +38,7 @@ public abstract class Symbol {
      * sequence is in the reverse order of production. This is useful
      * for easy copying onto parsing stack.
      *
+     * <p/>
      * Please note that this is a final. So the production for a symbol
      * should be known before that symbol is constructed. This requirement
      * cannot be met for those symbols which are recursive (e.g. a record that
@@ -48,6 +49,7 @@ public abstract class Symbol {
      * gives some comfort. See various generators how we generate records.
      */
     public final Symbol[] production;
+
     /**
      * Constructs a new symbol of the given kind <tt>kind</tt>.
      */
@@ -67,9 +69,11 @@ public abstract class Symbol {
     static Symbol root(Symbol... symbols) {
         return new Root(symbols);
     }
+
     /**
      * A convenience method to construct a sequence.
-     * @param production  The constituent symbols of the sequence.
+     *
+     * @param production The constituent symbols of the sequence.
      */
     static Symbol seq(Symbol... production) {
         return new Sequence(production);
@@ -77,6 +81,7 @@ public abstract class Symbol {
 
     /**
      * A convenience method to construct a repeater.
+     *
      * @param symsToRepeat The symbols to repeat in the repeater.
      */
     static Symbol repeat(Symbol endSymbol, Symbol... symsToRepeat) {
@@ -84,7 +89,7 @@ public abstract class Symbol {
     }
 
     /**
-     *  A convenience method to construct a union.
+     * A convenience method to construct a union.
      */
     static Symbol alt(Symbol[] symbols, String[] labels) {
         return new Alternative(symbols, labels);
@@ -131,7 +136,7 @@ public abstract class Symbol {
      * <tt>Sequence</tt> in the input are replaced by its production recursively.
      * Non-<tt>Sequence</tt> symbols, they internally have other symbols
      * those internal symbols also get flattened.
-     *
+     * <p/>
      * The algorithm does a few tricks to handle recursive symbol definitions.
      * In order to avoid infinite recursion with recursive symbols, we have a map
      * of Symbol->Symbol. Before fully constructing a flattened symbol for a
@@ -181,8 +186,8 @@ public abstract class Symbol {
      * Returns the amount of space required to flatten the given
      * sub-array of symbols.
      * @param symbols The array of input symbols.
-     * @param start The index where the subarray starts.
-     * @return  The number of symbols that will be produced if one expands
+     * @param start   The index where the subarray starts.
+     * @return The number of symbols that will be produced if one expands
      * the given input.
      */
     protected static int flattenedSize(Symbol[] symbols, int start) {
@@ -200,11 +205,15 @@ public abstract class Symbol {
 
     private static class Terminal extends Symbol {
         private final String printName;
+
         public Terminal(String printName) {
             super(Kind.TERMINAL);
             this.printName = printName;
         }
-        public String toString() { return printName; }
+
+        public String toString() {
+            return printName;
+        }
     }
 
     public static class ImplicitAction extends Symbol {
@@ -274,6 +283,7 @@ public abstract class Symbol {
                 }
             };
         }
+
         @Override
         public Sequence flatten(Map<Sequence, Sequence> map,
                                 Map<Sequence, List<Fixup>> map2) {
@@ -332,7 +342,7 @@ public abstract class Symbol {
      * for some inputs.
      */
     public static boolean hasErrors(Symbol symbol) {
-        switch(symbol.kind) {
+        switch (symbol.kind) {
             case ALTERNATIVE:
                 return hasErrors(symbol, ((Alternative) symbol).symbols);
             case EXPLICIT_ACTION:
@@ -353,8 +363,9 @@ public abstract class Symbol {
     }
 
     private static boolean hasErrors(Symbol root, Symbol[] symbols) {
-        if(null != symbols) {
-            for(Symbol s: symbols) {
+
+        if (null != symbols) {
+            for (Symbol s : symbols) {
                 if (s == root) {
                     continue;
                 }
@@ -369,6 +380,7 @@ public abstract class Symbol {
     public static class Alternative extends Symbol {
         public final Symbol[] symbols;
         public final String[] labels;
+
         private Alternative(Symbol[] symbols, String[] labels) {
             super(Kind.ALTERNATIVE);
             this.symbols = symbols;
@@ -411,6 +423,7 @@ public abstract class Symbol {
 
     public static class ErrorAction extends ImplicitAction {
         public final String msg;
+
         private ErrorAction(String msg) {
             this.msg = msg;
         }
@@ -422,7 +435,9 @@ public abstract class Symbol {
 
     public static class IntCheckAction extends Symbol {
         public final int size;
-        @Deprecated public IntCheckAction(int size) {
+
+        @Deprecated
+        public IntCheckAction(int size) {
             super(Kind.EXPLICIT_ACTION);
             this.size = size;
         }
@@ -434,7 +449,9 @@ public abstract class Symbol {
 
     public static class EnumAdjustAction extends IntCheckAction {
         public final Object[] adjustments;
-        @Deprecated public EnumAdjustAction(int rsymCount, Object[] adjustments) {
+
+        @Deprecated
+        public EnumAdjustAction(int rsymCount, Object[] adjustments) {
             super(rsymCount);
             this.adjustments = adjustments;
         }
@@ -445,12 +462,14 @@ public abstract class Symbol {
     }
 
     public static class WriterUnionAction extends ImplicitAction {
-        private WriterUnionAction() {}
+        private WriterUnionAction() {
+        }
     }
 
     public static class ResolvingAction extends ImplicitAction {
         public final Symbol writer;
         public final Symbol reader;
+
         private ResolvingAction(Symbol writer, Symbol reader) {
             this.writer = writer;
             this.reader = reader;
@@ -471,7 +490,9 @@ public abstract class Symbol {
 
     public static class SkipAction extends ImplicitAction {
         public final Symbol symToSkip;
-        @Deprecated public SkipAction(Symbol symToSkip) {
+
+        @Deprecated
+        public SkipAction(Symbol symToSkip) {
             super(true);
             this.symToSkip = symToSkip;
         }
@@ -491,7 +512,9 @@ public abstract class Symbol {
     public static class FieldAdjustAction extends ImplicitAction {
         public final int rindex;
         public final String fname;
-        @Deprecated public FieldAdjustAction(int rindex, String fname) {
+
+        @Deprecated
+        public FieldAdjustAction(int rindex, String fname) {
             this.rindex = rindex;
             this.fname = fname;
         }
@@ -503,7 +526,9 @@ public abstract class Symbol {
 
     public static final class FieldOrderAction extends ImplicitAction {
         public final Field[] fields;
-        @Deprecated public FieldOrderAction(Field[] fields) {
+
+        @Deprecated
+        public FieldOrderAction(Field[] fields) {
             this.fields = fields;
         }
     }
@@ -514,7 +539,9 @@ public abstract class Symbol {
 
     public static class DefaultStartAction extends ImplicitAction {
         public final byte[] contents;
-        @Deprecated public DefaultStartAction(byte[] contents) {
+
+        @Deprecated
+        public DefaultStartAction(byte[] contents) {
             this.contents = contents;
         }
     }
@@ -526,7 +553,9 @@ public abstract class Symbol {
     public static class UnionAdjustAction extends ImplicitAction {
         public final int rindex;
         public final Symbol symToParse;
-        @Deprecated public UnionAdjustAction(int rindex, Symbol symToParse) {
+
+        @Deprecated
+        public UnionAdjustAction(int rindex, Symbol symToParse) {
             this.rindex = rindex;
             this.symToParse = symToParse;
         }
@@ -539,14 +568,19 @@ public abstract class Symbol {
 
     }
 
-    /** For JSON. */
+
+    /**
+     * For JSON.
+     */
     public static EnumLabelsAction enumLabelsAction(List<String> symbols) {
         return new EnumLabelsAction(symbols);
     }
 
     public static class EnumLabelsAction extends IntCheckAction {
         public final List<String> symbols;
-        @Deprecated public EnumLabelsAction(List<String> symbols) {
+
+        @Deprecated
+        public EnumLabelsAction(List<String> symbols) {
             super(symbols.size());
             this.symbols = symbols;
         }
@@ -578,7 +612,7 @@ public abstract class Symbol {
     public static final Symbol DOUBLE = new Symbol.Terminal("double");
     public static final Symbol STRING = new Symbol.Terminal("string");
     public static final Symbol BYTES = new Symbol.Terminal("bytes");
-    public static final Symbol FIXED = new Symbol.Terminal("fixed");
+    public static final Symbol DATETIME = new Symbol.Terminal("datetime");
     public static final Symbol ENUM = new Symbol.Terminal("enum");
     public static final Symbol UNION = new Symbol.Terminal("union");
 
