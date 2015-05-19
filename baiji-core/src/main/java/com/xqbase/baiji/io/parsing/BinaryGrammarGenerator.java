@@ -1,10 +1,7 @@
 package com.xqbase.baiji.io.parsing;
 
 import com.xqbase.baiji.exceptions.BaijiTypeException;
-import com.xqbase.baiji.schema.Field;
-import com.xqbase.baiji.schema.RecordSchema;
-import com.xqbase.baiji.schema.Schema;
-import com.xqbase.baiji.schema.SchemaType;
+import com.xqbase.baiji.schema.*;
 
 import java.util.List;
 import java.util.Map;
@@ -54,6 +51,18 @@ public class BinaryGrammarGenerator extends ValidatingGrammarGenerator {
                 return Symbol.DATETIME;
             case RECORD:
                 return resolveRecord((RecordSchema) schema, seen);
+            case UNION:
+                return resolveUnion((UnionSchema) schema, seen);
+            case ARRAY:
+                ArraySchema arraySchema = (ArraySchema) schema;
+                return Symbol.seq(Symbol.repeat(Symbol.ARRAY_END,
+                            generate(arraySchema.getItemSchema(), seen)),
+                            Symbol.ARRAY_START);
+            case MAP:
+                MapSchema mapSchema = (MapSchema) schema;
+                return Symbol.seq(Symbol.repeat(Symbol.MAP_END,
+                            generate(mapSchema.getValueSchema(), seen), Symbol.STRING),
+                            Symbol.MAP_END);
             default:
                 throw new BaijiTypeException("unknown type: " + type);
         }
@@ -81,5 +90,27 @@ public class BinaryGrammarGenerator extends ValidatingGrammarGenerator {
             }
         }
         return result;
+    }
+
+    private Symbol resolveUnion(UnionSchema unionSchema, Map<LitS, Symbol> seen) {
+        List<Schema> types = unionSchema.getSchemas();
+        final int size = types.size();
+
+        Symbol[] symbols = new Symbol[size];
+        String[] labels = new String[size];
+
+        /**
+         * We construct a symbol without filling the arrays. Please see
+         * {@link Symbol#production} for the reason.
+         */
+        int i = 0;
+        for (Schema s: types) {
+            symbols[i] = generate(s, seen);
+            labels[i] = s.getName();
+            i ++;
+        }
+
+        return Symbol.seq(Symbol.alt(symbols, labels),
+                    Symbol.writerUnionAction());
     }
 }

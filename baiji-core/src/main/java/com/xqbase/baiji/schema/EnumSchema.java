@@ -73,6 +73,10 @@ public class EnumSchema extends NamedSchema implements Iterable<String> {
         return this.symbols;
     }
 
+    public boolean contains(String symbol) {
+        return this.symbols.contains(symbol);
+    }
+
     @Override
     public Iterator<String> iterator() {
         return null;
