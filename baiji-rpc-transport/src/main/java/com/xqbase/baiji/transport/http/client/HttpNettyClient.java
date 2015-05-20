@@ -15,6 +15,5 @@ public class HttpNettyClient implements TransportClient {
 
     @Override
     public void request(Request request, RequestContext requestContext, TransportCallback<Response> callback) {
-
     }
 }
