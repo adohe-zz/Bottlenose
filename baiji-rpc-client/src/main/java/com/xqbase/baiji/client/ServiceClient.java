@@ -1,7 +1,9 @@
 package com.xqbase.baiji.client;
 
 /**
- * Created by nankonami on 15-4-17.
+ * The generic service client.
+ *
+ * @author Tony He
  */
 public class ServiceClient {
 }
