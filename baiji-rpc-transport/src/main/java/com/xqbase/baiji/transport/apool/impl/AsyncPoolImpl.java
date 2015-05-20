@@ -42,6 +42,7 @@ public class AsyncPoolImpl<T> implements AsyncPool<T> {
     public enum Strategy { LRU, MRU }
 
     private int poolSize = 0;
+    // The lock mutex
     private final Object lock = new Object();
 
     private final Deque<TimedObject<T>> idle = new LinkedList<>();
