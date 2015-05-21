@@ -13,6 +13,12 @@ import com.xqbase.baiji.transport.bridge.common.TransportCallback;
  */
 public class HttpNettyClient implements TransportClient {
 
+    private final ChannelPoolManager poolManager;
+
+    public HttpNettyClient(ChannelPoolManager poolManager) {
+        this.poolManager = poolManager;
+    }
+
     @Override
     public void request(Request request, RequestContext requestContext, TransportCallback<Response> callback) {
     }
