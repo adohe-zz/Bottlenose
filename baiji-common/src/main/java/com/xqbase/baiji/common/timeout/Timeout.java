@@ -24,7 +24,7 @@ public class Timeout<T> implements TimeoutExecutor {
     private final ScheduledFuture<?> future;
     private final ClosableQueue<Runnable> queue = new ClosableQueue<>();
 
-    public Timeout(ScheduledExecutorService executor, int timeout, TimeUnit timeUnit, T item) {
+    public Timeout(ScheduledExecutorService executor, long timeout, TimeUnit timeUnit, T item) {
         if (null == item) {
             throw new NullPointerException("item cannot be null");
         }
