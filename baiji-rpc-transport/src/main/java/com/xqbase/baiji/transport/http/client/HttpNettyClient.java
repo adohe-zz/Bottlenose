@@ -5,6 +5,7 @@ import com.xqbase.baiji.m2.RequestContext;
 import com.xqbase.baiji.m2.Response;
 import com.xqbase.baiji.transport.apool.AsyncPool;
 import com.xqbase.baiji.transport.apool.impl.AsyncPoolImpl;
+import com.xqbase.baiji.transport.apool.impl.NoopCreateLatch;
 import com.xqbase.baiji.transport.bridge.client.TransportClient;
 import com.xqbase.baiji.transport.bridge.common.TransportCallback;
 import io.netty.bootstrap.Bootstrap;
@@ -35,6 +36,7 @@ public class HttpNettyClient implements TransportClient {
     private final ExecutorService callbackExecutor;
 
     private final int requestTimeout;
+    private final String name;
 
     public HttpNettyClient(ScheduledExecutorService timeoutSchedule,
                            ExecutorService callbackExecutor,
@@ -42,8 +44,21 @@ public class HttpNettyClient implements TransportClient {
                            int idleTimeout,
                            int poolSize,
                            int maxWaiters,
-                           ) {
-
+                           String name,
+                           int minPoolSize,
+                           AsyncPoolImpl.Strategy strategy) {
+        this.name = name;
+        this.requestTimeout = requestTimeout;
+        this.timeoutSchedule = timeoutSchedule;
+        this.callbackExecutor = callbackExecutor;
+        this.poolManager = new ChannelPoolManager(new ChannelPoolFactoryImpl(
+                new Bootstrap(),
+                poolSize,
+                minPoolSize,
+                idleTimeout,
+                maxWaiters,
+                strategy
+        ), name);
     }
 
     @Override
@@ -71,7 +86,20 @@ public class HttpNettyClient implements TransportClient {
 
         @Override
         public AsyncPool<Channel> getPool(SocketAddress address) {
-            return null;
+            return new AsyncPoolImpl<>("Http Channel Pool",
+                                                maxSize,
+                                                idleTimeout,
+                                                new ChannelPoolLifeCycle<Channel>(
+                                                        clientBootstrap,
+                                                        address,
+                                                        allChannels
+                                                ),
+                                                timeoutSchedule,
+                                                callbackExecutor,
+                                                maxWaiterSize,
+                                                minSize,
+                                                new NoopCreateLatch(),
+                                                strategy);
         }
     }
 }
