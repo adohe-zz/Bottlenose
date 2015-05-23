@@ -40,8 +40,8 @@ subprojects {
     }
 
     dependencies {
-        provided 'org.slf4j:slf4j-api:1.7.5'
-        provided 'org.slf4j:slf4j-simple:1.7.5'
+        compile 'org.slf4j:slf4j-api:1.7.5'
+        compile 'org.slf4j:slf4j-simple:1.7.5'
         testCompile 'junit:junit:4.11'
     }
 
