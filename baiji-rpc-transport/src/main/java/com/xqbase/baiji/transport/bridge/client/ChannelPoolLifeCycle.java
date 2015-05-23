@@ -1,4 +1,4 @@
-package com.xqbase.baiji.transport.http.client;
+package com.xqbase.baiji.transport.bridge.client;
 
 import com.xqbase.baiji.common.callback.Callback;
 import com.xqbase.baiji.transport.apool.LifeCycle;

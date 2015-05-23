@@ -1,9 +1,7 @@
-package com.xqbase.baiji.transport.http.common;
+package com.xqbase.baiji.transport.bridge.common;
 
 import com.xqbase.baiji.common.timeout.Timeout;
 import com.xqbase.baiji.common.timeout.TimeoutExecutor;
-import com.xqbase.baiji.transport.bridge.common.TransportCallback;
-import com.xqbase.baiji.transport.bridge.common.TransportResponse;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
@@ -19,7 +17,7 @@ public class TimeoutTransportCallback<T> implements TransportCallback<T>, Timeou
     private final Timeout<TransportCallback<T>> timeout;
 
     public TimeoutTransportCallback(ScheduledExecutorService scheduler, final ExecutorService executor,
-                long t, TimeUnit timeUnit, final TransportCallback<T> callback) {
+                                    long t, TimeUnit timeUnit, final TransportCallback<T> callback) {
         timeout = new Timeout<>(scheduler, t, timeUnit, callback);
         timeout.addTimeoutTask(new Runnable() {
             @Override
