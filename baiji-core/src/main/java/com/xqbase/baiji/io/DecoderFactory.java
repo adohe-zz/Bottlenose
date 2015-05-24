@@ -20,7 +20,7 @@ public class DecoderFactory {
 
     private int binaryDecoderBufferSize = DEFAULT_BUFFER_SIZE;
 
-    public DecoderFactory get() {
+    public static DecoderFactory get() {
         return DECODER_FACTORY;
     }
 

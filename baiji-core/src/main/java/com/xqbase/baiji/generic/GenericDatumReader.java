@@ -2,6 +2,7 @@ package com.xqbase.baiji.generic;
 
 import com.xqbase.baiji.io.DatumReader;
 import com.xqbase.baiji.io.Decoder;
+import com.xqbase.baiji.io.DecoderFactory;
 import com.xqbase.baiji.io.ResolvingDecoder;
 import com.xqbase.baiji.schema.Schema;
 
@@ -42,6 +43,28 @@ public abstract class GenericDatumReader<T> implements DatumReader<T> {
     protected GenericDatumReader(GenericData data) {
         this.data = data;
         this.creator = Thread.currentThread();
+    }
+
+    protected final ResolvingDecoder getResolver(Schema schema) throws IOException {
+        Thread thread = Thread.currentThread();
+        ResolvingDecoder resolver;
+        if (thread == creator && creatorResolver != null) {
+            return creatorResolver;
+        }
+
+        Map<Schema, ResolvingDecoder> cache = RESOLVER_CACHE.get().get(schema);
+        if (null == cache) {
+
+        }
+        resolver = cache.get(schema);
+        if (null == resolver) {
+            resolver = DecoderFactory.get().resolvingDecoder(schema, null);
+            cache.put(schema, resolver);
+        }
+        if (thread == creator) {
+            creatorResolver = resolver;
+        }
+        return resolver;
     }
 
     @Override
