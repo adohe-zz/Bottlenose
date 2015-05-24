@@ -26,6 +26,17 @@ public class ResolvingDecoder extends ParsingDecoder {
         super((Symbol) resolver, in);
     }
 
+    /**
+     * Produces an opaque resolver that can be used to construct a new
+     * {@link ResolvingDecoder#ResolvingDecoder(Object, Decoder)}. The
+     * returned Object is immutable and hence can be simultaneously used
+     * in many ResolvingDecoders. This method is reasonably expensive, the
+     * users are encouraged to cache the result.
+     *
+     * @param schema  The writer's schema. Cannot be null.
+     * @return  The opaque resolver.
+     * @throws IOException
+     */
     public static Object resolve(Schema schema) {
         if (null == schema) {
             throw new NullPointerException("schema cannot be null");

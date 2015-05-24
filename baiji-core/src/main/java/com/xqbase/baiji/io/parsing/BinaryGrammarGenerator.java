@@ -2,7 +2,9 @@ package com.xqbase.baiji.io.parsing;
 
 import com.xqbase.baiji.exceptions.BaijiTypeException;
 import com.xqbase.baiji.schema.*;
+import com.xqbase.baiji.util.ObjectUtil;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +56,9 @@ public class BinaryGrammarGenerator extends ValidatingGrammarGenerator {
             case DATETIME:
                 return Symbol.DATETIME;
             case ENUM:
+                EnumSchema enumSchema = (EnumSchema) schema;
+                return Symbol.seq(mkEnumAdjust(enumSchema.getEnumSymbols(), enumSchema.getEnumSymbols()),
+                                Symbol.ENUM);
             case RECORD:
                 return resolveRecord((RecordSchema) schema, seen);
             case UNION:
@@ -91,7 +96,7 @@ public class BinaryGrammarGenerator extends ValidatingGrammarGenerator {
             seen.put(wsc, result);
 
             for (Field f : fields) {
-                generate(f.getSchema(), seen);
+                production[--count] = generate(f.getSchema(), seen);
             }
         }
         return result;
@@ -117,5 +122,15 @@ public class BinaryGrammarGenerator extends ValidatingGrammarGenerator {
 
         return Symbol.seq(Symbol.alt(symbols, labels),
                     Symbol.writerUnionAction());
+    }
+
+    private static Symbol mkEnumAdjust(List<String> writeSymbols, List<String> readerSymbols) {
+        Object[] adjustments = new Object[writeSymbols.size()];
+        for (int i = 0; i < adjustments.length; i++) {
+            int j = readerSymbols.indexOf(writeSymbols.get(i));
+            adjustments[i] = (j == -1 ? "No match for " + writeSymbols.get(i)
+                    : new Integer(j));
+        }
+        return Symbol.enumAdjustAction(readerSymbols.size(), adjustments);
     }
 }
