@@ -1,6 +1,7 @@
 package com.xqbase.baiji.io;
 
 import com.xqbase.baiji.io.parsing.Parser;
+import com.xqbase.baiji.io.parsing.SkipParser;
 import com.xqbase.baiji.io.parsing.Symbol;
 
 import java.io.IOException;
@@ -11,7 +12,7 @@ import java.io.IOException;
  * @author Tony He
  */
 public abstract class ParsingDecoder implements Decoder,
-                    Parser.ActionHandler {
+                    Parser.ActionHandler, SkipParser.SkipHandler {
 
     protected ParsingDecoder() {
 
