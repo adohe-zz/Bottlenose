@@ -3,6 +3,7 @@ package com.xqbase.baiji.io.parsing;
 import com.xqbase.baiji.exceptions.BaijiTypeException;
 import com.xqbase.baiji.schema.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,8 +15,11 @@ import java.util.Map;
  */
 public class BinaryGrammarGenerator extends ValidatingGrammarGenerator {
 
-    public BinaryGrammarGenerator(Schema schema) {
-
+    /**
+     * Returns the start symbol for the grammar generated.
+     */
+    public final Symbol generate(Schema schema) {
+        return Symbol.root(generate(schema, new HashMap<LitS, Symbol>()));
     }
 
     /**
