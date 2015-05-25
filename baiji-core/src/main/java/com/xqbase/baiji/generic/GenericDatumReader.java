@@ -69,10 +69,11 @@ public abstract class GenericDatumReader<T> implements DatumReader<T> {
 
     @Override
     public T read(T reuse, Decoder in) throws IOException {
+        ResolvingDecoder resolver = getResolver(schema);
         return null;
     }
 
-    protected Object read(Object reuse, Schema schema, Decoder in) {
+    protected Object read(Object reuse, Schema schema, ResolvingDecoder resolver) {
         return null;
     }
 }
