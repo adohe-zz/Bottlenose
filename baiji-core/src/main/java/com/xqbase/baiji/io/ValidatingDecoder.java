@@ -31,6 +31,10 @@ public class ValidatingDecoder extends ParsingDecoder
         return this;
     }
 
+    public void drain() throws IOException {
+        skipParser.processImplicitActions();
+    }
+
     @Override
     public Symbol doAction(Symbol input, Symbol top) throws IOException {
         return null;

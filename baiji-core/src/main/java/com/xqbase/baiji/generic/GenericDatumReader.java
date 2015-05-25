@@ -4,6 +4,7 @@ import com.xqbase.baiji.io.DatumReader;
 import com.xqbase.baiji.io.Decoder;
 import com.xqbase.baiji.io.DecoderFactory;
 import com.xqbase.baiji.io.ResolvingDecoder;
+import com.xqbase.baiji.schema.RecordSchema;
 import com.xqbase.baiji.schema.Schema;
 
 import java.io.IOException;
@@ -68,12 +69,23 @@ public abstract class GenericDatumReader<T> implements DatumReader<T> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public T read(T reuse, Decoder in) throws IOException {
         ResolvingDecoder resolver = getResolver(schema);
-        return null;
+        resolver.configure(in);
+        T result = (T) read(reuse, schema, resolver);
+        resolver.drain();
+        return result;
     }
 
     protected Object read(Object reuse, Schema schema, ResolvingDecoder resolver) {
+        switch (schema.getType()) {
+            case RECORD:
+        }
+        return null;
+    }
+
+    private Object readRecord(Object reuse, RecordSchema recordSchema, ResolvingDecoder resolver) {
         return null;
     }
 }
