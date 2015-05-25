@@ -17,6 +17,20 @@ import java.util.Calendar;
 public class ValidatingDecoder extends ParsingDecoder
             implements Parser.ActionHandler {
 
+    protected Decoder in;
+
+    public ValidatingDecoder(Symbol root, Decoder in) throws IOException {
+        super(root);
+        this.configure(in);
+    }
+
+    // Configure the wrapped decoder.
+    public ValidatingDecoder configure(Decoder in) {
+        this.skipParser.reset();
+        this.in = in;
+        return this;
+    }
+
     @Override
     public Symbol doAction(Symbol input, Symbol top) throws IOException {
         return null;

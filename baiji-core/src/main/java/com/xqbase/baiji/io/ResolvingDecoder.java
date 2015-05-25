@@ -14,7 +14,7 @@ import java.util.Calendar;
  *
  * @author Tony He
  */
-public class ResolvingDecoder extends ParsingDecoder {
+public class ResolvingDecoder extends ValidatingDecoder {
 
     private Decoder backup;
 

@@ -14,10 +14,9 @@ import java.io.IOException;
 public abstract class ParsingDecoder implements Decoder,
                     Parser.ActionHandler, SkipParser.SkipHandler {
 
-    protected ParsingDecoder() {
+    protected final SkipParser skipParser;
 
-    }
-
-    protected ParsingDecoder(Symbol root, Decoder in) throws IOException {
+    protected ParsingDecoder(Symbol root) throws IOException {
+        this.skipParser = new SkipParser(root, this, this);
     }
 }
