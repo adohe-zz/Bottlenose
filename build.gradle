@@ -78,3 +78,10 @@ project(':baiji-rpc-transport') {
 project(':baiji-rpc-client') {
 
 }
+
+project(':baiji-rpc-server') {
+    dependencies {
+        compile project(':baiji-common')
+        compile 'javax.servlet:javax.servlet-api:3.1.0'
+    }
+}
