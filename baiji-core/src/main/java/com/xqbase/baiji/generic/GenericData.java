@@ -94,4 +94,16 @@ public class GenericData {
 
         return new Record(schema);
     }
+
+    public int hashCode(Object o, Schema s) {
+        return 0;
+    }
+
+    public String toString(Object datum) {
+        return null;
+    }
+
+    public int compare(Object o1, Object o2, Schema s) {
+        return 1;
+    }
 }
