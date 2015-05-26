@@ -3,6 +3,7 @@ package com.xqbase.baiji.transport.http.client;
 import com.xqbase.baiji.m2.Request;
 import com.xqbase.baiji.m2.RequestContext;
 import com.xqbase.baiji.m2.Response;
+import com.xqbase.baiji.m2.http.HttpRequest;
 import com.xqbase.baiji.transport.apool.AsyncPool;
 import com.xqbase.baiji.transport.apool.impl.AsyncPoolImpl;
 import com.xqbase.baiji.transport.apool.impl.NoopCreateLatch;
@@ -21,9 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.SocketAddress;
+import java.net.URI;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * HttpClient based on Netty.
@@ -42,6 +45,9 @@ public class HttpNettyClient implements TransportClient {
 
     private final int requestTimeout;
     private final String name;
+
+    private final AtomicReference<State> stateRef = new AtomicReference<>(State.RUNNING);
+    private enum State { RUNNING, SHUTTING_DOWN, SHUT_DOWN }
 
     public HttpNettyClient(ScheduledExecutorService timeoutSchedule,
                            ExecutorService callbackExecutor,
@@ -66,16 +72,22 @@ public class HttpNettyClient implements TransportClient {
         ), name);
     }
 
-    @Override
-    public void request(Request request, RequestContext requestContext, TransportCallback<Response> callback) {
-    }
-
-    private void writeRequestWithTimeout(Request request, RequestContext requestContext, TransportCallback<Response> callback) {
+    private void writeRequestWithTimeout(HttpRequest request, RequestContext requestContext, TransportCallback<Response> callback) {
         TimeoutTransportCallback<Response> timeoutCallback = new TimeoutTransportCallback<>(timeoutSchedule, callbackExecutor,
                 requestTimeout, TimeUnit.MICROSECONDS, callback);
     }
 
-    private void writeRequest(Request request, RequestContext requestContext, final TimeoutTransportCallback callback) {
+    private void writeRequest(HttpRequest request, RequestContext requestContext, final TimeoutTransportCallback callback) {
+        State s = stateRef.get();
+        if (s != State.RUNNING) {
+            return;
+        }
+
+        URI uri = request.getUri();
+    }
+
+    @Override
+    public void request(Request request, RequestContext requestContext, TransportCallback<Response> callback) {
 
     }
 
