@@ -92,7 +92,7 @@ public class HttpNettyClient implements TransportClient {
             return new AsyncPoolImpl<>("Http Channel Pool",
                                                 maxSize,
                                                 idleTimeout,
-                                                new ChannelPoolLifeCycle<Channel>(
+                                                new ChannelPoolLifeCycle(
                                                         clientBootstrap,
                                                         address,
                                                         allChannels
