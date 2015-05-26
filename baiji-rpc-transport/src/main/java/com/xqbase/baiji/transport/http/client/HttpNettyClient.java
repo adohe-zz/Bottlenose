@@ -10,6 +10,7 @@ import com.xqbase.baiji.transport.bridge.client.ChannelPoolFactory;
 import com.xqbase.baiji.transport.bridge.client.ChannelPoolLifeCycle;
 import com.xqbase.baiji.transport.bridge.client.ChannelPoolManager;
 import com.xqbase.baiji.transport.bridge.client.TransportClient;
+import com.xqbase.baiji.transport.bridge.common.TimeoutTransportCallback;
 import com.xqbase.baiji.transport.bridge.common.TransportCallback;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.net.SocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * HttpClient based on Netty.
@@ -66,6 +68,15 @@ public class HttpNettyClient implements TransportClient {
 
     @Override
     public void request(Request request, RequestContext requestContext, TransportCallback<Response> callback) {
+    }
+
+    private void writeRequestWithTimeout(Request request, RequestContext requestContext, TransportCallback<Response> callback) {
+        TimeoutTransportCallback<Response> timeoutCallback = new TimeoutTransportCallback<>(timeoutSchedule, callbackExecutor,
+                requestTimeout, TimeUnit.MICROSECONDS, callback);
+    }
+
+    private void writeRequest(Request request, RequestContext requestContext, final TimeoutTransportCallback callback) {
+
     }
 
     private class ChannelPoolFactoryImpl implements ChannelPoolFactory {
