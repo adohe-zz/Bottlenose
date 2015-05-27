@@ -1,5 +1,6 @@
 package com.xqbase.baiji.transport.http.client;
 
+import com.xqbase.baiji.common.callback.Callback;
 import com.xqbase.baiji.m2.Request;
 import com.xqbase.baiji.m2.RequestContext;
 import com.xqbase.baiji.m2.Response;
@@ -7,6 +8,7 @@ import com.xqbase.baiji.m2.http.HttpRequest;
 import com.xqbase.baiji.transport.apool.AsyncPool;
 import com.xqbase.baiji.transport.apool.impl.AsyncPoolImpl;
 import com.xqbase.baiji.transport.apool.impl.NoopCreateLatch;
+import com.xqbase.baiji.transport.apool.util.Cancellable;
 import com.xqbase.baiji.transport.bridge.client.ChannelPoolFactory;
 import com.xqbase.baiji.transport.bridge.client.ChannelPoolLifeCycle;
 import com.xqbase.baiji.transport.bridge.client.ChannelPoolManager;
@@ -21,6 +23,7 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.util.concurrent.ExecutorService;
@@ -36,6 +39,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public class HttpNettyClient implements TransportClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpNettyClient.class);
+    private static final int DEFAULT_HTTP_PORT = 80;
+    private static final int DEFAULT_HTTPS_PORT = 443;
 
     private final ChannelPoolManager poolManager;
     private final ChannelGroup allChannels = new DefaultChannelGroup("Transport Channels", GlobalEventExecutor.INSTANCE);
@@ -78,17 +83,58 @@ public class HttpNettyClient implements TransportClient {
     }
 
     private void writeRequest(HttpRequest request, RequestContext requestContext, final TimeoutTransportCallback callback) {
-        State s = stateRef.get();
-        if (s != State.RUNNING) {
+        State state = stateRef.get();
+        if (state != State.RUNNING) {
+            errorResponse(callback, new IllegalStateException("Client is " + state));
             return;
         }
 
         URI uri = request.getUri();
+        if (null == uri) {
+            errorResponse(callback, new IllegalArgumentException("URI cannot be null"));
+            return;
+        }
+        String schema = uri.getScheme();
+        if (!schema.equalsIgnoreCase("http") && !schema.equalsIgnoreCase("https")) {
+            errorResponse(callback, new IllegalArgumentException("Unknown schema: " + schema + " only http/https support"));
+            return;
+        }
+        String host = uri.getHost();
+        int port = uri.getPort();
+        if (port == -1) {
+            port = schema.equalsIgnoreCase("http") ? DEFAULT_HTTP_PORT : DEFAULT_HTTPS_PORT;
+        }
+
+        SocketAddress address = new InetSocketAddress(host, port);
+        final AsyncPool<Channel> pool;
+        try {
+            pool = poolManager.getPoolForAddress(address);
+        } catch (IllegalStateException e) {
+            errorResponse(callback, e);
+            return;
+        }
+
+        // Now we get the channel pool
+        final Cancellable pendingGet = pool.get(new Callback<Channel>() {
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onSuccess(Channel result) {
+
+            }
+        });
     }
 
     @Override
     public void request(Request request, RequestContext requestContext, TransportCallback<Response> callback) {
 
+    }
+
+    static <T> void errorResponse(TransportCallback<T> callback, Throwable e) {
+        callback.onResponse(null);
     }
 
     private class ChannelPoolFactoryImpl implements ChannelPoolFactory {
