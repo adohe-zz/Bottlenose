@@ -122,8 +122,7 @@ public class HttpNettyClient implements TransportClient {
             }
 
             @Override
-            public void onSuccess(Channel result) {
-
+            public void onSuccess(final Channel channel) {
             }
         });
     }
