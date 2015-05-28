@@ -9,10 +9,7 @@ import com.xqbase.baiji.transport.apool.AsyncPool;
 import com.xqbase.baiji.transport.apool.impl.AsyncPoolImpl;
 import com.xqbase.baiji.transport.apool.impl.NoopCreateLatch;
 import com.xqbase.baiji.transport.apool.util.Cancellable;
-import com.xqbase.baiji.transport.bridge.client.ChannelPoolFactory;
-import com.xqbase.baiji.transport.bridge.client.ChannelPoolLifeCycle;
-import com.xqbase.baiji.transport.bridge.client.ChannelPoolManager;
-import com.xqbase.baiji.transport.bridge.client.TransportClient;
+import com.xqbase.baiji.transport.bridge.client.*;
 import com.xqbase.baiji.transport.bridge.common.TimeoutTransportCallback;
 import com.xqbase.baiji.transport.bridge.common.TransportCallback;
 import io.netty.bootstrap.Bootstrap;
@@ -123,6 +120,7 @@ public class HttpNettyClient implements TransportClient {
 
             @Override
             public void onSuccess(final Channel channel) {
+                final ChannelPoolHandler poolHandler = channel.pipeline().get(ChannelPoolHandler.class);
             }
         });
     }

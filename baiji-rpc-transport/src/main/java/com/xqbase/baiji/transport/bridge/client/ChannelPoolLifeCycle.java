@@ -32,6 +32,8 @@ public class ChannelPoolLifeCycle implements LifeCycle<Channel> {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 Channel c = future.channel();
+                // add the ChannelPoolHandler
+                c.pipeline().addLast(new ChannelPoolHandler());
                 channelGroup.add(c);
                 callback.onSuccess(c);
             }
