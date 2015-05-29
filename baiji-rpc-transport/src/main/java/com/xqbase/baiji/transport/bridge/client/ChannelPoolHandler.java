@@ -17,5 +17,5 @@ import java.nio.channels.Channel;
  *
  * @author Tony He
  */
-public class ChannelPoolHandler extends UpStreamHandlerWithAttachment<AsyncPool<Channel>> {
+public class ChannelPoolHandler extends InboundHandlerWithAttachment<AsyncPool<Channel>> {
 }

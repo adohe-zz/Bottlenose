@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author Tony He
  */
-public class UpStreamHandlerWithAttachment<T> extends ChannelHandlerAdapter {
+public class InboundHandlerWithAttachment<T> extends ChannelHandlerAdapter {
 
 
     /**
