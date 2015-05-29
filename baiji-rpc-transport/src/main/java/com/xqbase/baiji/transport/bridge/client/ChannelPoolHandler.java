@@ -1,11 +1,12 @@
 package com.xqbase.baiji.transport.bridge.client;
 
 import com.xqbase.baiji.transport.apool.AsyncPool;
-
-import java.nio.channels.Channel;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
 
 /**
- * Listens for upstream events affecting the state of the channel as
+ * Listens for inbound events affecting the state of the channel as
  * it relates to the pool. This handler does not call super because
  * it expects to be the last handler in the pipeline, to ensure that
  * every other handler has had a chance to process the event and finish
@@ -18,4 +19,31 @@ import java.nio.channels.Channel;
  * @author Tony He
  */
 public class ChannelPoolHandler extends InboundHandlerWithAttachment<AsyncPool<Channel>> {
+
+    public ChannelPoolHandler() {
+    }
+
+    @Override
+    protected void messageReceived(ChannelHandlerContext ctx, Object msg) throws Exception {
+        AsyncPool<Channel> pool = removeAttachment(ctx);
+        if (pool != null) {
+            pool.put(ctx.pipeline().channel());
+        }
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        AsyncPool<Channel> pool = removeAttachment(ctx);
+        if (pool != null) {
+            pool.dispose(ctx.pipeline().channel());
+        }
+    }
+
+    @Override
+    public void close(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception {
+        AsyncPool<Channel> pool = removeAttachment(ctx);
+        if (pool != null) {
+            pool.dispose(ctx.pipeline().channel());
+        }
+    }
 }

@@ -1,7 +1,7 @@
 package com.xqbase.baiji.transport.bridge.client;
 
-import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author Tony He
  */
-public class InboundHandlerWithAttachment<T> extends ChannelHandlerAdapter {
+public abstract class InboundHandlerWithAttachment<T> extends SimpleChannelInboundHandler {
 
 
     /**
