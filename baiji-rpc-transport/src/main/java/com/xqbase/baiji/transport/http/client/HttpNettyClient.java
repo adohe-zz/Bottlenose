@@ -98,7 +98,7 @@ public class HttpNettyClient implements TransportClient {
         }
         String host = uri.getHost();
         int port = uri.getPort();
-        if (port == -1) {
+        if (-1 == port) {
             port = schema.equalsIgnoreCase("http") ? DEFAULT_HTTP_PORT : DEFAULT_HTTPS_PORT;
         }
 
@@ -120,7 +120,6 @@ public class HttpNettyClient implements TransportClient {
 
             @Override
             public void onSuccess(final Channel channel) {
-                final ChannelPoolHandler poolHandler = channel.pipeline().get(ChannelPoolHandler.class);
             }
         });
     }
