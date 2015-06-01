@@ -14,6 +14,7 @@ import com.xqbase.baiji.transport.bridge.common.TimeoutTransportCallback;
 import com.xqbase.baiji.transport.bridge.common.TransportCallback;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
@@ -79,7 +80,7 @@ public class HttpNettyClient implements TransportClient {
                 requestTimeout, TimeUnit.MICROSECONDS, callback);
     }
 
-    private void writeRequest(HttpRequest request, RequestContext requestContext, final TimeoutTransportCallback callback) {
+    private void writeRequest(final HttpRequest request, RequestContext requestContext, final TimeoutTransportCallback callback) {
         State state = stateRef.get();
         if (state != State.RUNNING) {
             errorResponse(callback, new IllegalStateException("Client is " + state));
@@ -121,6 +122,20 @@ public class HttpNettyClient implements TransportClient {
             @Override
             public void onSuccess(final Channel channel) {
                 final ChannelPoolHandler poolHandler = channel.pipeline().get(ChannelPoolHandler.class);
+                final ChannelHandlerContext channelHandlerContext = channel.pipeline().context(ChannelPoolHandler.class);
+                poolHandler.setAttachment(channelHandlerContext, pool);
+                callback.addTimeoutTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        // get channel from channel pool time out
+                        AsyncPool<Channel> asyncPool = (AsyncPool<Channel>) poolHandler.removeAttachment(channelHandlerContext);
+                        if (asyncPool != null) {
+                            asyncPool.dispose(channel);
+                        }
+                    }
+                });
+
+                channel.write(request);
             }
         });
     }
