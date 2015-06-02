@@ -9,6 +9,7 @@ import com.xqbase.baiji.transport.apool.AsyncPool;
 import com.xqbase.baiji.transport.apool.impl.AsyncPoolImpl;
 import com.xqbase.baiji.transport.apool.impl.NoopCreateLatch;
 import com.xqbase.baiji.transport.apool.util.Cancellable;
+import com.xqbase.baiji.transport.apool.util.None;
 import com.xqbase.baiji.transport.bridge.client.*;
 import com.xqbase.baiji.transport.bridge.common.TimeoutTransportCallback;
 import com.xqbase.baiji.transport.bridge.common.TransportCallback;
@@ -135,13 +136,33 @@ public class HttpNettyClient implements TransportClient {
                     }
                 });
 
+                channel.pipeline().get(HttpResponseHandler.class).setAttachment(channel.pipeline().context(HttpResponseHandler.class),
+                        callback);
+
+                final State s = stateRef.get();
+                if (s == State.SHUT_DOWN) {
+
+                }
                 channel.write(request);
             }
         });
+        if (pendingGet != null) {
+            callback.addTimeoutTask(new Runnable() {
+                @Override
+                public void run() {
+                    pendingGet.cancel();
+                }
+            });
+        }
     }
 
     @Override
     public void request(Request request, RequestContext requestContext, TransportCallback<Response> callback) {
+
+    }
+
+    @Override
+    public void shutdown(Callback<None> callback) {
 
     }
 

@@ -1,8 +1,10 @@
 package com.xqbase.baiji.transport.bridge.client;
 
+import com.xqbase.baiji.common.callback.Callback;
 import com.xqbase.baiji.m2.Request;
 import com.xqbase.baiji.m2.RequestContext;
 import com.xqbase.baiji.m2.Response;
+import com.xqbase.baiji.transport.apool.util.None;
 import com.xqbase.baiji.transport.bridge.common.TransportCallback;
 
 /**
@@ -21,4 +23,11 @@ public interface TransportClient {
     void request(Request request,
                  RequestContext requestContext,
                  TransportCallback<Response> callback);
+
+    /**
+     * Starts asynchronous shutdown of the client.
+     *
+     * @param callback a callback that will be invoked once the shutdown is complete.
+     */
+    void shutdown(Callback<None> callback);
 }
