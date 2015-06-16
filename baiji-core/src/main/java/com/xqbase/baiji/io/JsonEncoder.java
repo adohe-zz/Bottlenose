@@ -1,5 +1,6 @@
 package com.xqbase.baiji.io;
 
+import com.xqbase.baiji.io.parsing.JsonGrammarGenerator;
 import com.xqbase.baiji.io.parsing.Parser;
 import com.xqbase.baiji.io.parsing.Symbol;
 import com.xqbase.baiji.schema.Schema;
@@ -27,6 +28,9 @@ public class JsonEncoder extends ParsingEncoder implements Parser.ActionHandler 
 
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
+    private final Parser parser;
+    private JsonGenerator out;
+
     public JsonEncoder(Schema sc, OutputStream out) throws IOException {
         this(sc, getJsonGenerator(out, false));
     }
@@ -35,8 +39,9 @@ public class JsonEncoder extends ParsingEncoder implements Parser.ActionHandler 
         this(sc, getJsonGenerator(out, pretty));
     }
 
-    public JsonEncoder(Schema sc, JsonGenerator jsonGenerator) {
-
+    public JsonEncoder(Schema sc, JsonGenerator jsonGenerator) throws IOException {
+        configure(jsonGenerator);
+        this.parser = new Parser(new JsonGrammarGenerator().generate(sc), this);
     }
 
     private static JsonGenerator getJsonGenerator(OutputStream out, boolean pretty) throws IOException {
@@ -61,6 +66,16 @@ public class JsonEncoder extends ParsingEncoder implements Parser.ActionHandler 
         return g;
     }
 
+    /**
+     * Reconfigure this JsonEncoder to output to the JsonGenerator provided.
+     */
+    private JsonEncoder configure(JsonGenerator out) {
+        if (null == out)
+            throw new NullPointerException("JsonGenerator can't be null");
+        this.out = out;
+        return this;
+    }
+
     @Override
     public Symbol doAction(Symbol input, Symbol top) throws IOException {
         return null;
@@ -68,7 +83,8 @@ public class JsonEncoder extends ParsingEncoder implements Parser.ActionHandler 
 
     @Override
     public void writeNull() throws IOException {
-
+        parser.advance(Symbol.NULL);
+        out.writeNull();
     }
 
     @Override
