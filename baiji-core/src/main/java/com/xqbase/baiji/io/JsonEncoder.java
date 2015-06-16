@@ -89,32 +89,37 @@ public class JsonEncoder extends ParsingEncoder implements Parser.ActionHandler 
 
     @Override
     public void writeBoolean(boolean b) throws IOException {
-
+        parser.advance(Symbol.BOOLEAN);
+        out.writeBoolean(b);
     }
 
     @Override
     public void writeInt(int n) throws IOException {
-
+        parser.advance(Symbol.INT);
+        out.writeNumber(n);
     }
 
     @Override
     public void writeLong(long n) throws IOException {
-
+        parser.advance(Symbol.LONG);
+        out.writeNumber(n);
     }
 
     @Override
     public void writeFloat(float f) throws IOException {
-
+        parser.advance(Symbol.FLOAT);
+        out.writeNumber(f);
     }
 
     @Override
     public void writeDouble(double d) throws IOException {
-
+        parser.advance(Symbol.DOUBLE);
+        out.writeNumber(d);
     }
 
     @Override
     public void writeString(Utf8 str) throws IOException {
-
+        writeString(str.toString());
     }
 
     @Override

@@ -16,8 +16,8 @@ public class ObjectUtil {
     }
 
     public static boolean equals(Map<?, ?> map1, Map<?, ?> map2) {
-        if (map1 == null) {
-            return map2 == null;
+        if (null == map1) {
+            return null == map2;
         }
         if (map1.size() != map2.size()) {
             return false;
@@ -34,8 +34,8 @@ public class ObjectUtil {
     }
 
     public static boolean equals(Object obj1, Object obj2) {
-        if (obj1 == null) {
-            return obj2 == null;
+        if (null == obj1) {
+            return null == obj2;
         }
         if (obj1 instanceof byte[] && obj2 instanceof byte[]) {
             return Arrays.equals((byte[]) obj1, (byte[]) obj2);
@@ -47,8 +47,8 @@ public class ObjectUtil {
     }
 
     public static boolean equals(List<?> list1, List<?> list2) {
-        if (list1 == null)
-            return list2 == null;
+        if (null == list1)
+            return null == list2;
 
         if (list1.size() != list2.size())
             return false;
