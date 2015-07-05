@@ -8,4 +8,17 @@ package com.xqbase.baiji.loadbalancer;
  *
  */
 public class Server {
+
+    private boolean isAliveFlag;
+
+    public Server(String s) {
+    }
+
+    public void setIsAlive(boolean isAliveFlag) {
+        this.isAliveFlag = isAliveFlag;
+    }
+
+    public boolean isAlive() {
+        return this.isAliveFlag;
+    }
 }

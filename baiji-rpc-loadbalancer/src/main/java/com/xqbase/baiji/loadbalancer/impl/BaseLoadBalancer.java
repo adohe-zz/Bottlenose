@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -78,13 +79,85 @@ public class BaseLoadBalancer extends AbstractLoadBalancer {
         }
     }
 
-    private void setupPingTask() {
+    private boolean canSkipPing() {
+        return true;
+    }
 
+    private void setupPingTask() {
+        if (canSkipPing()) {
+            return;
+        }
+    }
+
+    /**
+     * Add a server to the 'allServer' list; does not verify uniqueness, so you
+     * could give a server a greater share by adding it more than once.
+     */
+    public void addServer(Server newServer) {
+        if (newServer != null) {
+            try {
+                ArrayList<Server> newList = new ArrayList<Server>();
+
+                newList.addAll(allServerList);
+                newList.add(newServer);
+                setServersList(newList);
+            } catch (Exception e) {
+                LOGGER.error("Exception while adding a newServer", e);
+            }
+        }
     }
 
     @Override
     public void addServers(List<Server> newServers) {
+        if (newServers != null && newServers.size() > 0) {
+            try {
+                ArrayList<Server> newList = new ArrayList<Server>();
 
+                newList.addAll(allServerList);
+                newList.addAll(newServers);
+                setServersList(newList);
+            } catch (Exception e) {
+                LOGGER.error("Exception while adding servers", e);
+            }
+        }
+    }
+
+    /**
+     * Set the list of servers used as the server pool. This overrides existing
+     * server list.
+     */
+    public void setServersList(List list) {
+        Lock writeLock = allServerLock.writeLock();
+        ArrayList<Server> allServers = new ArrayList<>();
+
+        for (Object s : list) {
+            if (null == s) {
+                continue;
+            }
+            if (s instanceof String) {
+                allServers.add(new Server((String) s));
+            }
+            if (s instanceof Server) {
+                allServers.add((Server) s);
+            } else {
+                throw new IllegalArgumentException("Only String or Server instance expected here, instead found: "
+                    + s.getClass());
+            }
+        }
+
+        writeLock.lock();
+        try {
+            allServerList = allServers;
+
+            if (canSkipPing()) {
+                for (Server s : allServerList) {
+                    s.setIsAlive(true);
+                }
+                upServerList = allServerList;
+            }
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
@@ -100,5 +173,15 @@ public class BaseLoadBalancer extends AbstractLoadBalancer {
     @Override
     public List<Server> getServersList(boolean availableOnly) {
         return null;
+    }
+
+    @Override
+    public List<Server> getServerList(ServerGroup serverGroup) {
+        return null;
+    }
+
+    @Override
+    public LoadBalancerStats getStats() {
+        return this.lbStats;
     }
 }
