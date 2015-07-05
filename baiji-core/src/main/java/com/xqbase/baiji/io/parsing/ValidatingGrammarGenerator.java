@@ -60,23 +60,23 @@ public class ValidatingGrammarGenerator {
             case RECORD: {
                 RecordSchema rsc = (RecordSchema) sc;
                 LitS wsc = new LitS(sc);
-                Symbol rresult = seen.get(wsc);
-                if (rresult == null) {
+                Symbol result = seen.get(wsc);
+                if (null == result) {
                     Symbol[] production = new Symbol[rsc.getFields().size()];
 
                     /**
                      * We construct a symbol without filling the array. Please see
                      * {@link Symbol#production} for the reason.
                      */
-                    rresult = Symbol.seq(production);
-                    seen.put(wsc, rresult);
+                    result = Symbol.seq(production);
+                    seen.put(wsc, result);
 
                     int i = production.length;
                     for (Field f : rsc.getFields()) {
                         production[--i] = generate(f.getSchema(), seen);
                     }
                 }
-                return rresult;
+                return result;
             }
             case UNION:
                 UnionSchema usc = (UnionSchema) sc;
@@ -91,7 +91,6 @@ public class ValidatingGrammarGenerator {
                     i++;
                 }
                 return Symbol.seq(Symbol.alt(symbols, labels), Symbol.UNION);
-
             default:
                 throw new RuntimeException("Unexpected schema type");
         }

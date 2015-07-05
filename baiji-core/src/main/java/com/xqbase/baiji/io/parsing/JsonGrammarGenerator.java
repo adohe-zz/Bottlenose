@@ -33,7 +33,6 @@ public class JsonGrammarGenerator extends ValidatingGrammarGenerator {
      * @return      The start symbol for the schema
      */
     @Override
-    @SuppressWarnings("unchecked")
     public Symbol generate(Schema sc, Map<LitS, Symbol> seen) {
         switch (sc.getType()) {
             case NULL:

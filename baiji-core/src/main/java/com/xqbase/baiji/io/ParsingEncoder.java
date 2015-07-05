@@ -44,7 +44,7 @@ public abstract class ParsingEncoder implements Encoder {
     }
 
     /**
-     * Pop
+     * Pop out of the stack.
      */
     protected final void pop() {
         if (counts[pos] != 0) {
