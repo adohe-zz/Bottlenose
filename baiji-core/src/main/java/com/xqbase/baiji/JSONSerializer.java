@@ -1,9 +1,6 @@
 package com.xqbase.baiji;
 
-import com.xqbase.baiji.io.DatumReader;
-import com.xqbase.baiji.io.DatumWriter;
-import com.xqbase.baiji.io.DirectBinaryDecoder;
-import com.xqbase.baiji.io.DirectBinaryEncoder;
+import com.xqbase.baiji.io.*;
 import com.xqbase.baiji.specific.SpecificDatumReader;
 import com.xqbase.baiji.specific.SpecificDatumWriter;
 import com.xqbase.baiji.specific.SpecificRecord;
@@ -27,7 +24,7 @@ public class JSONSerializer implements Serializer {
     @Override
     public <T extends SpecificRecord> void serialize(T obj, OutputStream stream) throws IOException {
         DatumWriter<T> writer = getWriter(obj);
-        writer.write(obj, new DirectBinaryEncoder(stream));
+        writer.write(obj, new JsonEncoder(obj.getSchema(), stream));
     }
 
     @Override

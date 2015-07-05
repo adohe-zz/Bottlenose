@@ -21,6 +21,7 @@ import java.util.Map;
  * <li>A <i>union</i> of other schemas;
  * <li>A unicode <i>string</i>;
  * <li>A sequence of <i>bytes</i>;
+ * <li>A UTC datetime</li>
  * <li>A 32-bit signed <i>int</i>;
  * <li>A 64-bit signed <i>long</i>;
  * <li>A 32-bit IEEE single-<i>float</i>; or
