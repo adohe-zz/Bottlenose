@@ -1,8 +1,7 @@
 package com.xqbase.baiji.io.parsing;
 
-import com.xqbase.baiji.schema.Field;
-import com.xqbase.baiji.schema.RecordSchema;
-import com.xqbase.baiji.schema.Schema;
+import com.xqbase.baiji.exceptions.BaijiRuntimeException;
+import com.xqbase.baiji.schema.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +33,7 @@ public class JsonGrammarGenerator extends ValidatingGrammarGenerator {
      * @return      The start symbol for the schema
      */
     @Override
+    @SuppressWarnings("unchecked")
     public Symbol generate(Schema sc, Map<LitS, Symbol> seen) {
         switch (sc.getType()) {
             case NULL:
@@ -47,6 +47,21 @@ public class JsonGrammarGenerator extends ValidatingGrammarGenerator {
             case BYTES:
             case UNION:
                 return super.generate(sc, seen);
+            case ENUM: {
+                EnumSchema esc = (EnumSchema) sc;
+                return Symbol.seq(Symbol.enumLabelsAction(esc.getEnumSymbols()), Symbol.ENUM);
+            }
+            case ARRAY: {
+                ArraySchema asc = (ArraySchema) sc;
+                return Symbol.seq(Symbol.repeat(Symbol.ARRAY_END, Symbol.ITEM_END,
+                        generate(asc.getItemSchema(), seen)), Symbol.ARRAY_START);
+            }
+            case MAP: {
+                MapSchema msc = (MapSchema) sc;
+                return Symbol.seq(Symbol.repeat(Symbol.MAP_END, Symbol.ITEM_END,
+                        generate(msc.getValueSchema(), seen), Symbol.MAP_KEY_MARKER, Symbol.STRING),
+                        Symbol.MAP_START);
+            }
             case RECORD: {
                 RecordSchema rsc = (RecordSchema) sc;
                 LitS litS = new LitS(rsc);
@@ -70,7 +85,8 @@ public class JsonGrammarGenerator extends ValidatingGrammarGenerator {
                     return result;
                 }
             }
+            default:
+                throw new BaijiRuntimeException("Unexpected Schema Type");
         }
-        return super.generate(sc, seen);
     }
 }
