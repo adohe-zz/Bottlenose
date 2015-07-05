@@ -67,6 +67,9 @@ project(':baiji-common') {
 project(':baiji-rpc-message') {
 }
 
+project(':baiji-rpc-loadbalancer') {
+}
+
 project(':baiji-rpc-transport') {
     dependencies {
         compile project(':baiji-common')
