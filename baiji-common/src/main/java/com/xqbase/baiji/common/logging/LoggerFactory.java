@@ -1,5 +1,7 @@
 package com.xqbase.baiji.common.logging;
 
+import com.xqbase.baiji.common.logging.slf4j.Slf4jLoggerFactory;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -15,7 +17,9 @@ public class LoggerFactory {
     private static ConcurrentHashMap<String, ILoggerFactory> loggerFactoryMap = new ConcurrentHashMap<>();
 
     static {
-
+        if (Slf4jLoggerFactory.available()) {
+            register(new Slf4jLoggerFactory());
+        }
     }
 
     /**
