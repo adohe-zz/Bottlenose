@@ -1,8 +1,8 @@
 package com.xqbase.baiji.loadbalancer.stats;
 
 /**
- * Class that acts as a repository of operational charateristics and statistics
- * of every Node/Server in the LaodBalancer.
+ * Class that acts as a repository of operational characteristics and statistics
+ * of every Node/Server in the LoadBalancer.
  *
  * This information can be used to just observe and understand the runtime
  * behavior of the loadbalancer or more importantly for the basis that

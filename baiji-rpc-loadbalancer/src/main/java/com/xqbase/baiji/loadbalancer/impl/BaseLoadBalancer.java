@@ -162,22 +162,48 @@ public class BaseLoadBalancer extends AbstractLoadBalancer {
 
     @Override
     public Server choose(Object key) {
-        return null;
+        if (null == rule) {
+            return null;
+        } else {
+            try {
+                return rule.choose(key);
+            } catch (Throwable t) {
+                return null;
+            }
+        }
     }
 
     @Override
     public void markServerDown(Server server) {
+        if (null == server)
+            return;
 
+        if (!server.isAlive())
+            return;
+
+        server.setIsAlive(false);
     }
 
     @Override
     public List<Server> getServersList(boolean availableOnly) {
-        return null;
+        return (availableOnly ? Collections.unmodifiableList(upServerList) :
+                Collections.unmodifiableList(allServerList));
     }
 
     @Override
     public List<Server> getServerList(ServerGroup serverGroup) {
-        return null;
+        switch (serverGroup) {
+            case ALL:
+                return allServerList;
+            case STATUS_UP:
+                return upServerList;
+            case STATUS_NOT_UP:
+                ArrayList<Server> allServers = new ArrayList<>(allServerList);
+                ArrayList<Server> upServers = new ArrayList<>(upServerList);
+                allServers.removeAll(upServers);
+                return allServers;
+        }
+        return new ArrayList<>();
     }
 
     @Override
