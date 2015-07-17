@@ -85,6 +85,11 @@ project(':baiji-rpc-client') {
 project(':baiji-rpc-server') {
     dependencies {
         compile project(':baiji-common')
+        compile 'org.eclipse.jetty:jetty-server:9.2.12.v20150709'
+        compile 'org.eclipse.jetty:jetty-servlet:9.2.12.v20150709'
+        compile 'org.eclipse.jetty:jetty-webapp:9.2.12.v20150709'
+        compile 'org.apache.tomcat.embed:tomcat-embed-core:7.0.63'
+        compile 'org.apache.tomcat:tomcat-util:7.0.63'
         compile 'javax.servlet:javax.servlet-api:3.1.0'
     }
 }
