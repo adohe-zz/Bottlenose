@@ -19,6 +19,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class LoadBalancerStats {
 
+    private static final String PREFIX = "LBStats_";
+
     private String name;
 
     private static final DynamicIntProperty SERVERSTATS_EXPIRE_MINUTES =
@@ -50,6 +52,14 @@ public class LoadBalancerStats {
     }
 
     public LoadBalancerStats(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
         this.name = name;
     }
 }
