@@ -25,7 +25,7 @@ public class RoundRobinRule extends AbstractLoadBalancerRule {
 
     private Server choose(LoadBalancer lb, Object key) {
         if (null == lb) {
-            logger.error("LoadBalancer can not be null");
+            logger.warn("no load balancer");
             return null;
         }
 
@@ -40,7 +40,7 @@ public class RoundRobinRule extends AbstractLoadBalancerRule {
             int allCount = allList.size();
 
             if (upCount == 0 || allCount == 0) {
-                logger.info("No up instance available");
+                logger.warn("No up instance available from load balancer: " + lb);
                 return null;
             }
 
@@ -48,6 +48,7 @@ public class RoundRobinRule extends AbstractLoadBalancerRule {
             server = allList.get(index);
 
             if (null == server) {
+                // Transient
                 Thread.yield();
                 continue;
             }
