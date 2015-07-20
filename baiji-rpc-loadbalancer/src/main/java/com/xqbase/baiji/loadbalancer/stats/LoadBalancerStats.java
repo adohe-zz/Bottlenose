@@ -23,12 +23,12 @@ public class LoadBalancerStats {
 
     private String name;
 
-    private static final DynamicIntProperty SERVERSTATS_EXPIRE_MINUTES =
+    private static final DynamicIntProperty SERVER_STATS_EXPIRE_MINUTES =
             DynamicPropertyFactory.getInstance().getIntProperty("baiji.loadbalancer.serverStats.expire.minutes", 30);
 
     private final LoadingCache<Server, ServerStats> serverStatsCache =
             CacheBuilder.newBuilder()
-                    .expireAfterAccess(SERVERSTATS_EXPIRE_MINUTES.get(), TimeUnit.MINUTES)
+                    .expireAfterAccess(SERVER_STATS_EXPIRE_MINUTES.get(), TimeUnit.MINUTES)
                     .removalListener(new RemovalListener<Server, ServerStats>() {
                         @Override
                         public void onRemoval(RemovalNotification<Server, ServerStats> notification) {

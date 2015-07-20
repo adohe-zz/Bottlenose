@@ -3,6 +3,9 @@ package com.xqbase.baiji.loadbalancer.stats;
 import com.netflix.config.DynamicIntProperty;
 import com.netflix.config.DynamicPropertyFactory;
 import com.xqbase.baiji.loadbalancer.Server;
+import com.xqbase.baiji.loadbalancer.collector.DataDistribution;
+import com.xqbase.baiji.loadbalancer.collector.DataPublisher;
+import com.xqbase.baiji.loadbalancer.collector.Distribution;
 
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,6 +21,8 @@ public class ServerStats {
     private static final int DEFAULT_PUBLISH_INTERVAL =  60 * 1000; // = 1 minute
     private static final int DEFAULT_BUFFER_SIZE = 60 * 1000; // = 1000 requests/sec for 1 minute
     private final DynamicIntProperty connectionFailureThreshold;
+    private static final DynamicIntProperty activeRequestsCountTimeout =
+            DynamicPropertyFactory.getInstance().getIntProperty("baiji.loadbalancer.serverStats.activeRequestsCount.effectiveWindowSeconds", 60 * 10);
 
     private static final double[] PERCENTS = makePercentValues();
 
@@ -42,7 +47,7 @@ public class ServerStats {
 
     public ServerStats() {
         connectionFailureThreshold = DynamicPropertyFactory.getInstance().getIntProperty(
-                "baiji.loadbalancer.default.conntion.failure.threshold", 3);
+                "baiji.loadbalancer.default.connection.failure.threshold", 3);
     }
 
     public void initialize(final Server server) {
@@ -130,6 +135,39 @@ public class ServerStats {
             activeRequestsCount.set(0);
         }
         lastActiveRequestsCountChangeTimestamp = System.currentTimeMillis();
+    }
+
+    public int getActiveRequestsCount() {
+        return getActiveRequestsCount(System.currentTimeMillis());
+    }
+
+    private int getActiveRequestsCount(long currentTime) {
+        int count = activeRequestsCount.get();
+        if (count == 0) {
+            return 0;
+        } else if (currentTime - lastActiveRequestsCountChangeTimestamp > activeRequestsCountTimeout.get() * 1000 || count < 0) {
+            activeRequestsCount.set(0);
+            return 0;
+        } else {
+            return count;
+        }
+    }
+
+    public void incrementNumRequests() {
+        totalRequests.incrementAndGet();
+    }
+
+    public void incrementSuccessiveConnectionFailureCount() {
+        successiveConnectionFailureCount.incrementAndGet();
+        lastConnectionFailedTimestamp = System.currentTimeMillis();
+    }
+
+    public void clearSuccessiveConnectionFailureCount() {
+        successiveConnectionFailureCount.set(0);
+    }
+
+    public int getSuccessiveConnectionFailureCount() {
+        return successiveConnectionFailureCount.get();
     }
 
     /**

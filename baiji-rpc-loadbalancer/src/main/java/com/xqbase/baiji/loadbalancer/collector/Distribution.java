@@ -1,4 +1,4 @@
-package com.xqbase.baiji.loadbalancer.stats;
+package com.xqbase.baiji.loadbalancer.collector;
 
 /**
  * Accumulator of statistics about a distribution of

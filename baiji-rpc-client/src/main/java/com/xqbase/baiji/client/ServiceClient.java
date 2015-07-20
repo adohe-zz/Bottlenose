@@ -5,5 +5,5 @@ package com.xqbase.baiji.client;
  *
  * @author Tony He
  */
-public class ServiceClient {
+public interface ServiceClient {
 }
