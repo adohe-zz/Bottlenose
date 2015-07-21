@@ -5,6 +5,7 @@ import com.netflix.config.DynamicIntProperty;
 import com.netflix.config.DynamicPropertyFactory;
 import com.xqbase.baiji.loadbalancer.Server;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -61,5 +62,19 @@ public class LoadBalancerStats {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public ServerStats getSingleServerStat(Server server) {
+        return getServerStats(server);
+    }
+
+    private ServerStats getServerStats(Server server) {
+        try {
+            return serverStatsCache.get(server);
+        } catch (ExecutionException e) {
+            ServerStats stats = createServerStats(server);
+            serverStatsCache.asMap().putIfAbsent(server, stats);
+            return serverStatsCache.asMap().get(server);
+        }
     }
 }
