@@ -5,6 +5,7 @@ import com.netflix.config.DynamicIntProperty;
 import com.netflix.config.DynamicPropertyFactory;
 import com.xqbase.baiji.loadbalancer.Server;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,12 +24,12 @@ public class LoadBalancerStats {
 
     private String name;
 
-    private static final DynamicIntProperty SERVERSTATS_EXPIRE_MINUTES =
+    private static final DynamicIntProperty SERVER_STATS_EXPIRE_MINUTES =
             DynamicPropertyFactory.getInstance().getIntProperty("baiji.loadbalancer.serverStats.expire.minutes", 30);
 
     private final LoadingCache<Server, ServerStats> serverStatsCache =
             CacheBuilder.newBuilder()
-                    .expireAfterAccess(SERVERSTATS_EXPIRE_MINUTES.get(), TimeUnit.MINUTES)
+                    .expireAfterAccess(SERVER_STATS_EXPIRE_MINUTES.get(), TimeUnit.MINUTES)
                     .removalListener(new RemovalListener<Server, ServerStats>() {
                         @Override
                         public void onRemoval(RemovalNotification<Server, ServerStats> notification) {
@@ -61,5 +62,19 @@ public class LoadBalancerStats {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public ServerStats getSingleServerStat(Server server) {
+        return getServerStats(server);
+    }
+
+    private ServerStats getServerStats(Server server) {
+        try {
+            return serverStatsCache.get(server);
+        } catch (ExecutionException e) {
+            ServerStats stats = createServerStats(server);
+            serverStatsCache.asMap().putIfAbsent(server, stats);
+            return serverStatsCache.asMap().get(server);
+        }
     }
 }

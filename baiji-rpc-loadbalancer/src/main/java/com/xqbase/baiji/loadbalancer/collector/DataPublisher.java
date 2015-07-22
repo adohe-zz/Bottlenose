@@ -1,4 +1,4 @@
-package com.xqbase.baiji.loadbalancer.stats;
+package com.xqbase.baiji.loadbalancer.collector;
 
 import java.util.concurrent.*;
 
