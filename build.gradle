@@ -71,6 +71,7 @@ project(':baiji-rpc-loadbalancer') {
     dependencies {
         compile project(':baiji-rpc-client')
         compile project(':baiji-common')
+        compile project(':baiji-rpc-message')
         compile 'com.netflix.archaius:archaius-core:0.5.12'
         compile 'com.google.guava:guava:14.0.1'
     }
