@@ -57,7 +57,7 @@ public class DataPublisher {
      * @see #stop
      */
     public synchronized void start() {
-        if (future == null) {
+        if (null == future) {
             Runnable task = new Runnable() {
                 public void run() {
                     try {

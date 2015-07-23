@@ -3,7 +3,11 @@ package com.xqbase.baiji.loadbalancer.reactive;
 /**
  * A listener to be invoked by load balancer at different stage of execution.
  *
- * @author Tony He
+ * @param <I> Input type used by {@link ExecutionContext} passed to
+ *           listener where it can call {@link ExecutionContext#getRequest()} to examine the
+ *           request object of the execution
+ * @param <O> Output type from the load balancer execution, used by {@link #onExecutionSuccess(ExecutionContext, Object, ExecutionInfo)}
+ *           API
  */
 public interface ExecutionListener<I, O> {
 
@@ -29,26 +33,26 @@ public interface ExecutionListener<I, O> {
     public void onExecutionStart(ExecutionContext<I> context) throws AbortExecutionException;
 
     /**
-     * Called when a server is chosen and the request is going to be executed on the server.
+     * Called when a instance is chosen and the request is going to be executed on the instance.
      *
      * @throws ExecutionListener.AbortExecutionException if the listener would
      *              like to abort the execution
      */
-    public void onStartWithServer(ExecutionContext<I> context, ExecutionInfo info) throws AbortExecutionException;
+    public void onStartWithInstance(ExecutionContext<I> context, ExecutionInfo info) throws AbortExecutionException;
 
     /**
-     * Called when an exception is received from executing the request on a server.
+     * Called when an exception is received from executing the request on a instance.
      *
      * @param exception Exception received
      */
-    public void onExceptionWithServer(ExecutionContext<I> context, Throwable exception,  ExecutionInfo info);
+    public void onExceptionWithInstance(ExecutionContext<I> context, Throwable exception, ExecutionInfo info);
 
     /**
-     * Called when the request is executed successfully on the server
+     * Called when the request is executed successfully on the instance
      *
      * @param response Object received from the execution
      */
-    public void onExecutionSuccess(ExecutionContext<I> context, O response,  ExecutionInfo info);
+    public void onExecutionSuccess(ExecutionContext<I> context, O response, ExecutionInfo info);
 
     /**
      * Called when the request is considered failed after all retries.
