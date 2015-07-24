@@ -22,10 +22,9 @@ import java.net.InetAddress;
  */
 public class JettyEmbeddedServletContainerFactory implements EmbeddedServletContainerFactory {
 
-    public static final int DEFAULT_PORT = 8080;
-
     private int port = DEFAULT_PORT;
-    private String contextPath = "";
+    private String contextPath = DEFAULT_CONTEXT_PATH;
+
     private InetAddress address;
 
     @Override
@@ -39,8 +38,7 @@ public class JettyEmbeddedServletContainerFactory implements EmbeddedServletCont
     }
 
     protected final void configureServletContextHandler(ServletContextHandler handler) {
-        String contextPath = getContextPath();
-        handler.setContextPath(StringUtils.hasLength(contextPath) ? contextPath : "/");
+        handler.setContextPath("/");
         addBaijiServlet(handler);
     }
 
@@ -69,11 +67,21 @@ public class JettyEmbeddedServletContainerFactory implements EmbeddedServletCont
         return port;
     }
 
-    public InetAddress getAddress() {
-        return address;
+    @Override
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    @Override
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
     }
 
     public String getContextPath() {
         return contextPath;
+    }
+
+    public InetAddress getAddress() {
+        return address;
     }
 }

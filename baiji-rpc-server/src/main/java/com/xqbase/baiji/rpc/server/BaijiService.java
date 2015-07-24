@@ -1,5 +1,8 @@
 package com.xqbase.baiji.rpc.server;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * Classes that can be used to bootstrap and launch a Baiji service
  * from a Java main method.
@@ -9,8 +12,13 @@ package com.xqbase.baiji.rpc.server;
 public class BaijiService {
 
     private Class<?> mainServiceClass;
+    private Set<Object> sources = new LinkedHashSet<>();
 
-    private BaijiService() {
+    public static BaijiService service(Object source) {
+        return new BaijiService(source);
+    }
+
+    private BaijiService(Object... sources) {
 
     }
 

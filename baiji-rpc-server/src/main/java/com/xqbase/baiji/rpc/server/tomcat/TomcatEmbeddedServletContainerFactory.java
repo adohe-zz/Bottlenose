@@ -23,14 +23,14 @@ import java.net.InetAddress;
  */
 public class TomcatEmbeddedServletContainerFactory implements EmbeddedServletContainerFactory {
 
-    public static final String DEFAULT_PROTOCOL = "org.apache.coyote.http11.Http11NioProtocol";
-    public static final int DEFAULT_PORT = 8080;
+    private static final String DEFAULT_PROTOCOL = "org.apache.coyote.http11.Http11NioProtocol";
 
     private File baseDirectory;
 
     private String protocol = DEFAULT_PROTOCOL;
     private int port = DEFAULT_PORT;
     private String uriEncoding = "UTF-8";
+    private String contextPath = DEFAULT_CONTEXT_PATH;
 
     private InetAddress address;
 
@@ -72,8 +72,8 @@ public class TomcatEmbeddedServletContainerFactory implements EmbeddedServletCon
     private void prepareContext(Host host) {
         TomcatEmbeddedContext context = new TomcatEmbeddedContext();
         File docBase = createTempDir("tomcat-docbase");
-        context.setName("test");
-        context.setPath("test");
+        context.setName("Baiji");
+        context.setPath("");
         context.setDocBase(docBase.getAbsolutePath());
         context.addLifecycleListener(new Tomcat.FixContextListener());
         addDefaultServlet(context);
@@ -111,8 +111,18 @@ public class TomcatEmbeddedServletContainerFactory implements EmbeddedServletCon
         return port;
     }
 
+    @Override
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public String getContextPath() {
+        return contextPath;
+    }
+
+    @Override
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
     }
 
     public String getUriEncoding() {
