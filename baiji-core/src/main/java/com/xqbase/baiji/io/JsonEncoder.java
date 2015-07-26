@@ -88,6 +88,25 @@ public class JsonEncoder extends ParsingEncoder implements Parser.ActionHandler 
         return this;
     }
 
+    /**
+     * Reconfigures this JsonEncoder to use the output stream provided.
+     * <p/>
+     * If the OutputStream provided is null, a NullPointerException is thrown.
+     * <p/>
+     * Otherwise, this JsonEncoder will flush its current output and then
+     * reconfigure its output to use a default UTF8 JsonGenerator that writes
+     * to the provided OutputStream.
+     *
+     * @param out
+     *          The OutputStream to direct output to. Cannot be null.
+     * @throws IOException
+     * @return this JsonEncoder
+     */
+    public JsonEncoder configure(OutputStream out) throws IOException {
+        this.configure(getJsonGenerator(out, false));
+        return this;
+    }
+
     @Override
     public Symbol doAction(Symbol input, Symbol top) throws IOException {
         if (top instanceof Symbol.FieldAdjustAction) {
