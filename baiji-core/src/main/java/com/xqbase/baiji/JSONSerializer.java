@@ -1,5 +1,6 @@
 package com.xqbase.baiji;
 
+import com.xqbase.baiji.exceptions.BaijiRuntimeException;
 import com.xqbase.baiji.io.*;
 import com.xqbase.baiji.specific.SpecificDatumReader;
 import com.xqbase.baiji.specific.SpecificDatumWriter;
@@ -57,7 +58,7 @@ public class JSONSerializer implements Serializer {
                 ctor.setAccessible(true);
                 record = ctor.newInstance();
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new BaijiRuntimeException("Can not create instance of " + clazz.getName(), e);
             }
             reader = new SpecificDatumReader(record.getSchema());
             DatumReader<T> existedReader = readerCache.putIfAbsent(clazz, reader);
