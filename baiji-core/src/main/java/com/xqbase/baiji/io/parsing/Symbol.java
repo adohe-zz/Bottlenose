@@ -6,6 +6,8 @@ import java.util.*;
 /**
  * Symbol is the base of all symbols (terminals and non-terminals) of
  * the grammar.
+ *
+ * @author Tony He
  */
 public abstract class Symbol {
     /*

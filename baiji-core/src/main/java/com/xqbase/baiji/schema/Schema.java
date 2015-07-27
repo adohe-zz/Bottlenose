@@ -1,12 +1,17 @@
 package com.xqbase.baiji.schema;
 
 
+import com.xqbase.baiji.common.util.StringUtils;
+import com.xqbase.baiji.exceptions.BaijiRuntimeException;
 import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,7 +100,7 @@ public abstract class Schema {
      * @return a new Schema Object
      */
     public static Schema parse(String json) {
-        if (json == null || json.isEmpty()) {
+        if (!StringUtils.hasLength(json)) {
             throw new IllegalArgumentException("JSON string can't be null or empty.");
         }
 
@@ -176,5 +181,60 @@ public abstract class Schema {
             }
         }
         return null;
+    }
+
+    /**
+     * Render this as <a href="http://json.org/">JSON</a>.
+     */
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+
+    public String toString(boolean pretty) {
+        try {
+            StringWriter writer = new StringWriter();
+            JsonGenerator gen = FACTORY.createJsonGenerator(writer);
+            if (pretty)
+                gen.useDefaultPrettyPrinter();
+
+            if (this instanceof PrimitiveSchema || this instanceof UnionSchema) {
+                gen.writeStartObject();
+                gen.writeFieldName("type");
+            }
+
+            writeJSON(gen, new SchemaNames());
+
+            if (this instanceof PrimitiveSchema || this instanceof UnionSchema) {
+                gen.writeEndObject();
+            }
+
+            gen.flush();
+            return writer.toString();
+        } catch (IOException e) {
+            throw new BaijiRuntimeException(e);
+        }
+    }
+
+    protected void writeJSON(JsonGenerator gen, SchemaNames names) throws IOException {
+        writeStartObject(gen);
+        writeJsonFields(gen, names, null);
+        gen.writeEndObject();
+    }
+
+    private void writeStartObject(JsonGenerator gen) throws IOException {
+        gen.writeStartObject();
+        gen.writeFieldName("type");
+        gen.writeString(type.toString().toLowerCase());
+    }
+
+    /**
+     * Default implementation for writing schema properties in JSON format
+     *
+     * @param gen      JSON generator
+     * @param names    list of named schemas already written
+     * @param encSpace enclosing namespace of the schema
+     */
+    protected void writeJsonFields(JsonGenerator gen, SchemaNames names, String encSpace) throws IOException {
     }
 }

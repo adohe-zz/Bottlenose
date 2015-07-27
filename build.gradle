@@ -53,7 +53,16 @@ subprojects {
 }
 
 project(':baiji-core') {
+    sourceSets {
+        test {
+            java {
+                srcDirs 'src/main/test'
+            }
+        }
+    }
+
     dependencies {
+        compile project(':baiji-common')
         compile 'org.codehaus.jackson:jackson-core-asl:1.9.13'
         compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
         compile 'com.google.guava:guava:17.0'

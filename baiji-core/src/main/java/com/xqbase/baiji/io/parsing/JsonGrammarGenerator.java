@@ -15,7 +15,7 @@ public class JsonGrammarGenerator extends ValidatingGrammarGenerator {
 
     /**
      * Returns the non-terminal that is the start symbol
-     * for the grammar for the grammar for the given schema <tt>sc</tt>.
+     * for the grammar for the given schema <tt>sc</tt>.
      */
     @Override
     public Symbol generate(Schema schema) {
