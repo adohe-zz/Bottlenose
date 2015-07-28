@@ -282,12 +282,14 @@ public class ServerStats {
 
         sb.append("[Server:" + server + ";");
         sb.append("\tTotal Requests:" + totalRequests + ";");
+        sb.append("\tSuccessive connection failure:" + getSuccessiveConnectionFailureCount() + ";");
         sb.append("\tTotal blackout seconds:" + totalCircuitBreakerBlackOutPeriod.get() / 1000 + ";");
         sb.append("\tLast connection made:" + new Date(lastAccessedTimestamp) + ";");
         if (lastConnectionFailedTimestamp > 0) {
             sb.append("\tLast connection failure: " + new Date(lastConnectionFailedTimestamp)  + ";");
         }
         sb.append("\tFirst connection made: " + new Date(firstConnectionTimestamp)  + ";");
+        sb.append("\tActive connections:" + getActiveRequestsCount() + ";");
         sb.append("\taverage resp time:" + getResponseTimeAvg()  + ";");
         sb.append("\t90 percentile resp time:" + getResponseTime90thPercentile()  + ";");
         sb.append("\t95 percentile resp time:" + getResponseTime95thPercentile()  + ";");
