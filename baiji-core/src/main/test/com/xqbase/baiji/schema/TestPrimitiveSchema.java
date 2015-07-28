@@ -14,8 +14,8 @@ public class TestPrimitiveSchema extends SchemaTestBase {
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][]{new Object[]{"null", SchemaType.NULL}});
-                /*new Object[]{"boolean", SchemaType.BOOLEAN},
+        return Arrays.asList(new Object[]{"null", SchemaType.NULL},
+                new Object[]{"boolean", SchemaType.BOOLEAN},
                 new Object[]{"int", SchemaType.INT},
                 new Object[]{"long", SchemaType.LONG},
                 new Object[]{"float", SchemaType.FLOAT},
@@ -28,8 +28,8 @@ public class TestPrimitiveSchema extends SchemaTestBase {
                 new Object[]{"{ \"type\": \"long\" }", SchemaType.LONG},
                 new Object[]{"{ \"type\": \"float\" }", SchemaType.FLOAT},
                 new Object[]{"{ \"type\": \"double\" }", SchemaType.DOUBLE},
-                new Object[]{"{ \"type\": \"bytes\" }", SchemaType.BYTES},*/
-                //new Object[]{"{ \"type\": \"string\" }", SchemaType.STRING});
+                new Object[]{"{ \"type\": \"bytes\" }", SchemaType.BYTES},
+                new Object[]{"{ \"type\": \"string\" }", SchemaType.STRING});
     }
 
     private final String schema;

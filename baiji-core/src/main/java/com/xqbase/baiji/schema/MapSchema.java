@@ -2,7 +2,10 @@ package com.xqbase.baiji.schema;
 
 import com.xqbase.baiji.exceptions.BaijiTypeException;
 import com.xqbase.baiji.util.ObjectUtil;
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
+
+import java.io.IOException;
 
 /**
  * The MapSchema Definition.
@@ -14,7 +17,7 @@ public class MapSchema extends UnnamedSchema {
     private final Schema valueSchema;
 
     protected MapSchema(Schema valueSchema, PropertyMap propertyMap) {
-        super(SchemaType.ARRAY, propertyMap);
+        super(SchemaType.MAP, propertyMap);
         if (null == valueSchema)
             throw new IllegalArgumentException("Map value schema can't be null");
         this.valueSchema = valueSchema;
@@ -51,9 +54,14 @@ public class MapSchema extends UnnamedSchema {
                 && ObjectUtil.equals(that.getPropertyMap(), getPropertyMap());
     }
 
-
     @Override
     public int hashCode() {
         return 29 * valueSchema.hashCode() + ObjectUtil.hashCode(getPropertyMap());
+    }
+
+    @Override
+    protected void writeJsonFields(JsonGenerator gen, SchemaNames names, String encSpace) throws IOException {
+        gen.writeFieldName("values");
+        valueSchema.writeJSON(gen, names);
     }
 }

@@ -1,8 +1,10 @@
 package com.xqbase.baiji.schema;
 
 import com.xqbase.baiji.exceptions.BaijiRuntimeException;
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -102,5 +104,10 @@ public abstract class NamedSchema extends Schema {
             aliases.add(aliasNode.getTextValue());
         }
         return aliases;
+    }
+
+    @Override
+    protected void writeJSON(JsonGenerator gen, SchemaNames names) throws IOException {
+        super.writeJSON(gen, names);
     }
 }

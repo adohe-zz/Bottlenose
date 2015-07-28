@@ -188,7 +188,7 @@ public abstract class Schema {
      */
     @Override
     public String toString() {
-        return super.toString();
+        return toString(false);
     }
 
     public String toString(boolean pretty) {

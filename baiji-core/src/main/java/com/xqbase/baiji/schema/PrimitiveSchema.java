@@ -1,7 +1,9 @@
 package com.xqbase.baiji.schema;
 
 import com.xqbase.baiji.util.ObjectUtil;
+import org.codehaus.jackson.JsonGenerator;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,5 +53,10 @@ public class PrimitiveSchema extends UnnamedSchema {
     @Override
     public int hashCode() {
         return 13 * getType().hashCode() + ObjectUtil.hashCode(getPropertyMap());
+    }
+
+    @Override
+    protected void writeJSON(JsonGenerator gen, SchemaNames names) throws IOException {
+        gen.writeString(getName());
     }
 }

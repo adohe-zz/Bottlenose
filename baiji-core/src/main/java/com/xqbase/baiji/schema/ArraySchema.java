@@ -1,7 +1,10 @@
 package com.xqbase.baiji.schema;
 
 import com.xqbase.baiji.util.ObjectUtil;
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
+
+import java.io.IOException;
 
 /**
  * The Array Schema definition.
@@ -47,5 +50,11 @@ public class ArraySchema extends UnnamedSchema {
     @Override
     public int hashCode() {
         return 29 * itemSchema.hashCode() + ObjectUtil.hashCode(getPropertyMap());
+    }
+
+    @Override
+    protected void writeJsonFields(JsonGenerator gen, SchemaNames names, String encSpace) throws IOException {
+        gen.writeFieldName("items");
+        itemSchema.writeJSON(gen, names);
     }
 }
