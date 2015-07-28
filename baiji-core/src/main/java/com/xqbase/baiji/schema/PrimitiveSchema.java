@@ -14,6 +14,20 @@ import java.util.Map;
  */
 public class PrimitiveSchema extends UnnamedSchema {
 
+    private static final Map<String, SchemaType> PRIMITIVES = new HashMap<>();
+
+    static {
+        PRIMITIVES.put("null", SchemaType.NULL);
+        PRIMITIVES.put("boolean", SchemaType.BOOLEAN);
+        PRIMITIVES.put("int", SchemaType.INT);
+        PRIMITIVES.put("long", SchemaType.LONG);
+        PRIMITIVES.put("float", SchemaType.FLOAT);
+        PRIMITIVES.put("double", SchemaType.DOUBLE);
+        PRIMITIVES.put("bytes", SchemaType.BYTES);
+        PRIMITIVES.put("string", SchemaType.STRING);
+        PRIMITIVES.put("datetime", SchemaType.DATETIME);
+    }
+
     protected PrimitiveSchema(SchemaType type, PropertyMap propertyMap) {
         super(type, propertyMap);
     }

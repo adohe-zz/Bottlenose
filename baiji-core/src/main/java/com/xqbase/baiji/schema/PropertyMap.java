@@ -37,7 +37,7 @@ public class PropertyMap extends HashMap<String, String> {
         }
 
         String oldValue = get(key);
-        if (oldValue == null) {
+        if (null == oldValue) {
             return super.put(key, value);
         } else if (!oldValue.equals(value)) {
             throw new BaijiRuntimeException("Property can't be overwritten: " + key);

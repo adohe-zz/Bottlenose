@@ -44,20 +44,9 @@ public abstract class Schema {
     private static final JsonFactory FACTORY = new JsonFactory();
     private static final ObjectMapper MAPPER = new ObjectMapper(FACTORY);
 
-    static final Map<String, SchemaType> PRIMITIVES = new HashMap<>();
-    
     static {
         FACTORY.enable(JsonParser.Feature.ALLOW_COMMENTS);
         FACTORY.setCodec(MAPPER);
-        PRIMITIVES.put("null", SchemaType.NULL);
-        PRIMITIVES.put("boolean", SchemaType.BOOLEAN);
-        PRIMITIVES.put("int", SchemaType.INT);
-        PRIMITIVES.put("long", SchemaType.LONG);
-        PRIMITIVES.put("float", SchemaType.FLOAT);
-        PRIMITIVES.put("double", SchemaType.DOUBLE);
-        PRIMITIVES.put("bytes", SchemaType.BYTES);
-        PRIMITIVES.put("string", SchemaType.STRING);
-        PRIMITIVES.put("datetime", SchemaType.DATETIME);
     }
 
     private final SchemaType type;
