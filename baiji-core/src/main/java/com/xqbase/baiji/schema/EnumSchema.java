@@ -69,6 +69,10 @@ public class EnumSchema extends NamedSchema implements Iterable<String> {
         return ordinals.get(symbol);
     }
 
+    public int size() {
+        return symbols.size();
+    }
+
     public List<String> getEnumSymbols() {
         return this.symbols;
     }
@@ -79,6 +83,6 @@ public class EnumSchema extends NamedSchema implements Iterable<String> {
 
     @Override
     public Iterator<String> iterator() {
-        return null;
+        return symbols.iterator();
     }
 }

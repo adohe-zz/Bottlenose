@@ -1,5 +1,6 @@
 package com.xqbase.baiji.schema;
 
+import com.xqbase.baiji.common.util.StringUtils;
 import com.xqbase.baiji.exceptions.BaijiRuntimeException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
@@ -108,6 +109,29 @@ public abstract class NamedSchema extends Schema {
 
     @Override
     protected void writeJSON(JsonGenerator gen, SchemaNames names) throws IOException {
-        super.writeJSON(gen, names);
+        if (!names.add(this)) {
+            gen.writeString(getSchemaName().getName());
+        } else {
+            super.writeJSON(gen, names);
+        }
+    }
+
+    @Override
+    protected void writeJsonFields(JsonGenerator gen, SchemaNames names) throws IOException {
+        schemaName.writeJSON(gen);
+
+        if (StringUtils.hasLength(doc)) {
+            gen.writeFieldName("doc");
+            gen.writeString(doc);
+        }
+
+        if (aliases != null) {
+            gen.writeFieldName("aliases");
+            gen.writeStartArray();
+            for (String a : aliases) {
+                gen.writeString(a);
+            }
+            gen.writeEndArray();
+        }
     }
 }

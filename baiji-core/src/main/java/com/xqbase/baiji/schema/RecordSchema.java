@@ -13,9 +13,7 @@ import java.util.*;
 public class RecordSchema extends NamedSchema implements Iterable<Field> {
 
     private final List<Field> fields;
-
     private final Map<String, Field> fieldLookup;
-
     private final Map<String, Field> fieldAliasLookup;
 
     /**

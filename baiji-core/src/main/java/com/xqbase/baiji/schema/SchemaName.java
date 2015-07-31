@@ -1,5 +1,9 @@
 package com.xqbase.baiji.schema;
 
+import org.codehaus.jackson.JsonGenerator;
+
+import java.io.IOException;
+
 /**
  * This class represents the name of a {@link NamedSchema}.
  *
@@ -49,10 +53,15 @@ public class SchemaName {
     }
 
     public int hashCode() {
-        return fullName == null ? 0 : fullName.hashCode();
+        return null == fullName ? 0 : fullName.hashCode();
     }
 
     public String toString() {
         return fullName;
+    }
+
+    public void writeJSON(JsonGenerator gen) throws IOException {
+        JsonHelper.writeIfNotNullOrEmpty(gen, "name", name);
+        JsonHelper.writeIfNotNullOrEmpty(gen, "namespace", namespace);
     }
 }

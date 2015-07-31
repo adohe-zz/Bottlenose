@@ -2,9 +2,11 @@ package com.xqbase.baiji.schema;
 
 import com.xqbase.baiji.exceptions.BaijiRuntimeException;
 import com.xqbase.baiji.util.ObjectUtil;
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +21,7 @@ public class UnionSchema extends UnnamedSchema {
 
     private final List<Schema> schemas;
     private final Map<String,Integer> indexByName
-            = new HashMap<String,Integer>();
+            = new HashMap<>();
 
     protected UnionSchema(final LockableArrayList<Schema> schemas, PropertyMap propertyMap) {
         super(SchemaType.UNION, propertyMap);
@@ -85,6 +87,15 @@ public class UnionSchema extends UnnamedSchema {
     }
 
     @Override
+    protected void writeJSON(JsonGenerator gen, SchemaNames names) throws IOException {
+        gen.writeStartArray();
+        for (Schema schema : schemas) {
+            schema.writeJSON(gen, names);
+        }
+        gen.writeEndArray();
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
@@ -92,11 +103,10 @@ public class UnionSchema extends UnnamedSchema {
         if (!(obj instanceof UnionSchema)) {
             return false;
         }
+
         UnionSchema that = (UnionSchema) obj;
-        if (!that.schemas.equals(schemas)) {
-            return false;
-        }
-        return ObjectUtil.equals(that.getPropertyMap(), getPropertyMap());
+        return schemas.equals(that.schemas)
+                    && ObjectUtil.equals(that.getPropertyMap(), getPropertyMap());
     }
 
 

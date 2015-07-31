@@ -207,7 +207,7 @@ public abstract class Schema {
 
     protected void writeJSON(JsonGenerator gen, SchemaNames names) throws IOException {
         writeStartObject(gen);
-        writeJsonFields(gen, names, null);
+        writeJsonFields(gen, names);
         gen.writeEndObject();
     }
 
@@ -222,8 +222,7 @@ public abstract class Schema {
      *
      * @param gen      JSON generator
      * @param names    list of named schemas already written
-     * @param encSpace enclosing namespace of the schema
      */
-    protected void writeJsonFields(JsonGenerator gen, SchemaNames names, String encSpace) throws IOException {
+    protected void writeJsonFields(JsonGenerator gen, SchemaNames names) throws IOException {
     }
 }

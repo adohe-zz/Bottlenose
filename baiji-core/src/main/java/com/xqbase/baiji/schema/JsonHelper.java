@@ -1,6 +1,10 @@
 package com.xqbase.baiji.schema;
 
+import com.xqbase.baiji.common.util.StringUtils;
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
+
+import java.io.IOException;
 
 /**
  * JSON Utility.
@@ -60,5 +64,13 @@ public class JsonHelper {
         if (null == key || key.isEmpty()) {
             throw new IllegalArgumentException("key cannot be null or empty");
         }
+    }
+
+    public static void writeIfNotNullOrEmpty(JsonGenerator gen, String key, String value)
+            throws IOException {
+        if (!StringUtils.hasLength(value)) {
+            return;
+        }
+        gen.writeStringField(key, value);
     }
 }
