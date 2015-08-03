@@ -1,4 +1,4 @@
-package com.xqbase.baiji.rpc.server.host;
+package com.xqbase.baiji.rpc.server.handler;
 
 /**
  * Server                 ---
@@ -6,10 +6,10 @@ package com.xqbase.baiji.rpc.server.host;
  *     ---Engine             |
  *       ---Host             |  Tomcat
  *         ---Context        |________
- *           ---ServiceHost           |
- *             ---ServiceContext      |
+ *           ---ServiceContext        |
+ *             ---ServiceHandler      |
  *
  * @author Tony He
  */
-public interface ServiceHost {
+public interface ServiceHandler {
 }

@@ -1,4 +1,4 @@
-package com.xqbase.baiji.rpc.server.host;
+package com.xqbase.baiji.rpc.server.handler;
 
 /**
  * Host configuration which will apply to all of
