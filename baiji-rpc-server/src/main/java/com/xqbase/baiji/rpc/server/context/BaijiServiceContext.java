@@ -5,5 +5,5 @@ package com.xqbase.baiji.rpc.server.context;
  *
  * @author Tony He
  */
-public class BaijiServiceContext {
+public class BaijiServiceContext implements ServiceContext {
 }
