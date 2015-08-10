@@ -114,3 +114,13 @@ project(':baiji-rpc-server') {
 project(':baiji-rpc-server-netty') {
 
 }
+
+project(':baiji-registry') {
+
+}
+
+project(':baiji-registry-etcd') {
+    dependencies {
+        compile project(':baiji-registry')
+    }
+}

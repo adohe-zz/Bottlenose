@@ -7,4 +7,5 @@ include 'baiji-rpc-client'
 include 'baiji-rpc-server'
 include 'baiji-rpc-loadbalancer'
 include 'baiji-rpc-server-netty'
-
+include 'baiji-registry'
+include 'baiji-registry-etcd'
