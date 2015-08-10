@@ -1,5 +1,6 @@
 package com.xqbase.baiji.schema;
 
+import com.xqbase.baiji.common.util.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.DoubleNode;
 
@@ -109,6 +110,23 @@ public class RecordSchema extends NamedSchema implements Iterable<Field> {
      */
     public List<Field> getFields() {
         return fields;
+    }
+
+    public int getFieldsSize() {
+        return fields.size();
+    }
+
+    /**
+     * Returns the field with the given name.
+     *
+     * @param name field name
+     * @return Field object
+     */
+    public Field getField(String name) {
+        if (!StringUtils.hasLength(name)) {
+            throw new IllegalArgumentException("name cannot be null");
+        }
+        return fieldLookup.get(name.toLowerCase());
     }
 
     @Override
