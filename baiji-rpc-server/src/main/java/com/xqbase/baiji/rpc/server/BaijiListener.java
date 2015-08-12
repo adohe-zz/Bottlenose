@@ -2,6 +2,7 @@ package com.xqbase.baiji.rpc.server;
 
 import com.xqbase.baiji.common.logging.Logger;
 import com.xqbase.baiji.common.logging.LoggerFactory;
+import com.xqbase.baiji.rpc.server.context.BaijiServletContext;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -22,6 +23,8 @@ public class BaijiListener implements ServletContextListener {
     private static final String DEBUG_MODE_PARAM = "debug";
 
     private static final Logger logger = LoggerFactory.getLogger(BaijiListener.class);
+
+    private final BaijiServletContext context = BaijiServletContext.INSTANCE;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
