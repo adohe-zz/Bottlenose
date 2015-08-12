@@ -60,7 +60,7 @@ public class MapSchema extends UnnamedSchema {
     }
 
     @Override
-    protected void writeJsonFields(JsonGenerator gen, SchemaNames names, String encSpace) throws IOException {
+    protected void writeJsonFields(JsonGenerator gen, SchemaNames names) throws IOException {
         gen.writeFieldName("values");
         valueSchema.writeJSON(gen, names);
     }

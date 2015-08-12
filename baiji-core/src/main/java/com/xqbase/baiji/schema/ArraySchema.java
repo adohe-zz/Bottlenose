@@ -53,7 +53,7 @@ public class ArraySchema extends UnnamedSchema {
     }
 
     @Override
-    protected void writeJsonFields(JsonGenerator gen, SchemaNames names, String encSpace) throws IOException {
+    protected void writeJsonFields(JsonGenerator gen, SchemaNames names) throws IOException {
         gen.writeFieldName("items");
         itemSchema.writeJSON(gen, names);
     }
