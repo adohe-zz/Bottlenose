@@ -1,5 +1,6 @@
 package com.xqbase.baiji.schema;
 
+import com.xqbase.baiji.util.ObjectUtil;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
@@ -79,6 +80,26 @@ public class EnumSchema extends NamedSchema implements Iterable<String> {
 
     public boolean contains(String symbol) {
         return this.symbols.contains(symbol);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+
+        if (!(obj instanceof EnumSchema))
+            return false;
+
+        EnumSchema that = (EnumSchema) obj;
+        if (this.getName().equals(that.getName()) && this.size() == that.size()) {
+            for (int i = 0; i < this.size(); i++) {
+                if (!(this.symbols.get(i).equals(that.symbols.get(i)))) {
+                    return false;
+                }
+            }
+            return ObjectUtil.equals(this.getPropertyMap(), that.getPropertyMap());
+        }
+        return false;
     }
 
     @Override

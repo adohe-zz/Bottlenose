@@ -37,7 +37,7 @@ public class JsonHelper {
      */
     public static String getRequiredString(JsonNode container, String key, String error) {
         String value = getOptionalString(container, key);
-        if (null == value || value.length() == 0) {
+        if (!StringUtils.hasLength(value)) {
             throw new SchemaParseException(error + ":" + container);
         }
         return value;
@@ -61,7 +61,7 @@ public class JsonHelper {
     }
 
     private static void ensureValidKey(String key) {
-        if (null == key || key.isEmpty()) {
+        if (!StringUtils.hasLength(key)) {
             throw new IllegalArgumentException("key cannot be null or empty");
         }
     }
