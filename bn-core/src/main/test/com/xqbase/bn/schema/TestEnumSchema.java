@@ -15,7 +15,17 @@ public class TestEnumSchema extends SchemaTestBase {
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[]
+        return Arrays.asList(new Object[][]{
+                new Object[]
+                        {"{\"type\": \"enum\", \"name\": \"Test\", \"symbols\": [\"A\", \"B\"]}",
+                                new String[]{"A", "B"},
+                                new HashMap<String, Integer>() {{
+                                    put("A", null);
+                                    put("B", null);
+                                }},
+                        }
+        });
+        /*return Arrays.asList(new Object[]
                 {"{\"type\": \"enum\", \"name\": \"Test\", \"symbols\": [\"A\", \"B\"]}",
                         new String[]{"A", "B"},
                         new HashMap<String, Integer>() {{
@@ -34,7 +44,7 @@ public class TestEnumSchema extends SchemaTestBase {
                                     put("E", 1);
                                     put("F", 7);
                                 }}
-                        });
+                        });*/
     }
 
     private final String schema;

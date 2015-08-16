@@ -11,7 +11,7 @@ subprojects {
     apply plugin: 'eclipse'
     apply plugin: 'idea'
 
-    group = "com.xqbase.baiji"
+    group = "com.xqbase.bn"
 
     tasks.withType(Javadoc).each {
         it.classpath = sourceSets.main.compileClasspath
@@ -52,7 +52,7 @@ subprojects {
     }
 }
 
-project(':baiji-core') {
+project(':bn-core') {
     sourceSets {
         test {
             java {
@@ -62,46 +62,46 @@ project(':baiji-core') {
     }
 
     dependencies {
-        compile project(':baiji-common')
+        compile project(':bn-common')
         compile 'org.codehaus.jackson:jackson-core-asl:1.9.13'
         compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
         compile 'com.google.guava:guava:17.0'
     }
 }
 
-project(':baiji-common') {
+project(':bn-common') {
 
 }
 
-project(':baiji-rpc-message') {
+project(':bn-rpc-message') {
 }
 
-project(':baiji-rpc-loadbalancer') {
+project(':bn-rpc-loadbalancer') {
     dependencies {
-        compile project(':baiji-rpc-client')
-        compile project(':baiji-common')
-        compile project(':baiji-rpc-message')
+        compile project(':bn-rpc-client')
+        compile project(':bn-common')
+        compile project(':bn-rpc-message')
         compile 'com.netflix.archaius:archaius-core:0.5.12'
         compile 'com.google.guava:guava:14.0.1'
         compile 'io.reactivex:rxjava:1.0.12'
     }
 }
 
-project(':baiji-rpc-transport') {
+project(':bn-rpc-transport') {
     dependencies {
-        compile project(':baiji-common')
-        compile project(':baiji-rpc-message')
+        compile project(':bn-common')
+        compile project(':bn-rpc-message')
         compile 'io.netty:netty-all:5.0.0.Alpha2'
     }
 }
 
-project(':baiji-rpc-client') {
+project(':bn-rpc-client') {
 
 }
 
-project(':baiji-rpc-server') {
+project(':bn-rpc-server') {
     dependencies {
-        compile project(':baiji-common')
+        compile project(':bn-common')
         compile 'org.eclipse.jetty:jetty-server:9.2.12.v20150709'
         compile 'org.eclipse.jetty:jetty-servlet:9.2.12.v20150709'
         compile 'org.eclipse.jetty:jetty-webapp:9.2.12.v20150709'
@@ -111,16 +111,16 @@ project(':baiji-rpc-server') {
     }
 }
 
-project(':baiji-rpc-server-netty') {
+project(':bn-rpc-server-netty') {
 
 }
 
-project(':baiji-registry') {
+project(':bn-registry') {
 
 }
 
-project(':baiji-registry-etcd') {
+project(':bn-registry-etcd') {
     dependencies {
-        compile project(':baiji-registry')
+        compile project(':bn-registry')
     }
 }

@@ -102,6 +102,15 @@ public class EnumSchema extends NamedSchema implements Iterable<String> {
     }
 
     @Override
+    public int hashCode() {
+        int value = getSchemaName().hashCode() + ObjectUtil.hashCode(getPropertyMap());
+        for (String symbol : symbols) {
+            value += 23 * symbol.hashCode();
+        }
+        return value;
+    }
+
+    @Override
     public Iterator<String> iterator() {
         return symbols.iterator();
     }
