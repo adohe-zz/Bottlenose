@@ -1,2 +1,3 @@
-# Baiji
-Baiji is a contract first Java SOA Framework.
+# Bottlenose
+
+Bottlenose is a contract first(compared to code first) Java SOA Framework.
