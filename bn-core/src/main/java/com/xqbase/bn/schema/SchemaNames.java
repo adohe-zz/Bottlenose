@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class SchemaNames implements Iterable<Map.Entry<SchemaName, NamedSchema>> {
 
-    private final Map<SchemaName, NamedSchema> names = new HashMap<SchemaName, NamedSchema>();
+    private final Map<SchemaName, NamedSchema> names = new HashMap<>();
 
     public Map<SchemaName, NamedSchema> getNames() {
         return names;
