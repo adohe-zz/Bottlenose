@@ -1,8 +1,8 @@
 package com.xqbase.bn.rpc.server.servlet;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import java.io.IOException;
 
 /**
@@ -13,8 +13,8 @@ import java.io.IOException;
 public class DefaultBaijiServlet extends BaijiServlet {
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp)
+    public void service(ServletRequest req, ServletResponse res)
             throws ServletException, IOException {
-        super.service(req, resp);
+        processRequest(req, res);
     }
 }
