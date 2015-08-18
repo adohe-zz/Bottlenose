@@ -1,6 +1,7 @@
 package com.xqbase.bn.schema;
 
 import com.xqbase.bn.common.util.StringUtils;
+import com.xqbase.bn.util.ObjectUtil;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.DoubleNode;
 
@@ -16,6 +17,12 @@ public class RecordSchema extends NamedSchema implements Iterable<Field> {
     private final List<Field> fields;
     private final Map<String, Field> fieldLookup;
     private final Map<String, Field> fieldAliasLookup;
+
+    private static final ThreadLocal<Set<RecordSchemaPair>> SEEN = new ThreadLocal<Set<RecordSchemaPair>>() {
+        protected Set<RecordSchemaPair> initialValue() {
+            return new HashSet<>();
+        }
+    };
 
     /**
      * Construct a named schema.
@@ -147,5 +154,86 @@ public class RecordSchema extends NamedSchema implements Iterable<Field> {
     @Override
     public Iterator<Field> iterator() {
         return fields.iterator();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof RecordSchema)) {
+            return false;
+        }
+
+        Set<RecordSchemaPair> seen = SEEN.get();
+        RecordSchema that = (RecordSchema) obj;
+        RecordSchemaPair pair = new RecordSchemaPair(this, that);
+        if (seen.contains(pair)) {
+            return true;
+        }
+        seen.add(pair);
+
+        try {
+            if (getSchemaName().equals(that.getSchemaName()) && getFieldsSize() == that.getFieldsSize()) {
+                for (int i = 0; i < fields.size(); i++) {
+                    if (!fields.get(i).equals(that.fields.get(i))) {
+                        return false;
+                    }
+                }
+                return ObjectUtil.equals(getPropertyMap(), that.getPropertyMap());
+            }
+
+            return false;
+        } finally {
+            seen.remove(pair);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        Set<RecordSchemaPair> seen = SEEN.get();
+        RecordSchemaPair pair = new RecordSchemaPair(this, this);
+        if (seen.contains(pair)) {
+            return 0;
+        }
+        seen.add(pair);
+
+        try {
+            long result = getSchemaName().hashCode();
+            for (Field field : this) {
+                result += 29L * field.hashCode();
+            }
+            result += ObjectUtil.hashCode(getPropertyMap());
+            return (int) result;
+        } finally {
+            seen.remove(pair);
+        }
+    }
+
+    private static class RecordSchemaPair {
+        public final RecordSchema first;
+        public final RecordSchema second;
+
+        public RecordSchemaPair(RecordSchema first, RecordSchema second) {
+            this.first = first;
+            this.second = second;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) {
+                return true;
+            }
+            if (!(obj instanceof RecordSchemaPair)) {
+                return false;
+            }
+            RecordSchemaPair that = (RecordSchemaPair) obj;
+            return that.first == first && that.second == second;
+        }
+
+        @Override
+        public int hashCode() {
+            return System.identityHashCode(first) + System.identityHashCode(second);
+        }
     }
 }
