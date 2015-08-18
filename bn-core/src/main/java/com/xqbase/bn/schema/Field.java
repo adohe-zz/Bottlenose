@@ -1,5 +1,6 @@
 package com.xqbase.bn.schema;
 
+import com.xqbase.bn.common.util.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import java.util.Set;
 
@@ -51,10 +52,10 @@ public class Field {
      */
     public Field(Schema schema, String name, Set<String> aliases, int pos, String doc,
                  JsonNode defaultValue, SortOrder sortOrder, PropertyMap props) {
-        if (name == null || name.isEmpty()) {
+        if (!StringUtils.hasLength(name)) {
             throw new IllegalArgumentException("name cannot be null.");
         }
-        if (schema == null) {
+        if (null == schema) {
             throw new IllegalArgumentException("schema cannot be null.");
         }
         this.schema = schema;

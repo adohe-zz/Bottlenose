@@ -26,24 +26,12 @@ public class RecordSchema extends NamedSchema implements Iterable<Field> {
      * @param props      the schema properties map.
      */
     protected RecordSchema(SchemaName schemaName, String doc, Set<String> aliases, PropertyMap props,
-                    List<Field> fields) {
-        super(SchemaType.RECORD, schemaName, doc, aliases, props, new SchemaNames());
+                    List<Field> fields, Map<String, Field> fieldMap,
+                    Map<String, Field> fieldAliasMap, SchemaNames names) {
+        super(SchemaType.RECORD, schemaName, doc, aliases, props, names);
         this.fields = fields;
-        Map<String, Field> fieldMap = new HashMap<>();
-        Map<String, Field> fieldAliasMap = new HashMap<>();
-        for (Field field : fields) {
-            addToFieldMap(fieldMap, field.getName(), field);
-            addToFieldMap(fieldAliasMap, field.getName(), field);
-
-            if (field.getAliases() != null) {
-                for (String alias : field.getAliases()) {
-                    addToFieldMap(fieldAliasMap, alias, field);
-                }
-            }
-        }
-
-        fieldLookup = fieldMap;
-        fieldAliasLookup = fieldAliasMap;
+        this.fieldLookup = fieldMap;
+        this.fieldAliasLookup = fieldAliasMap;
     }
 
     /**
@@ -64,36 +52,27 @@ public class RecordSchema extends NamedSchema implements Iterable<Field> {
             throw new SchemaParseException("Record has no fields " + node);
         }
         List<Field> fieldList = new ArrayList<>();
+        Map<String, Field> fieldMap = new HashMap<>();
+        Map<String, Field> fieldAliasMap = new HashMap<>();
+        RecordSchema result = new RecordSchema(name, doc, aliases, props, fieldList, fieldMap,
+                fieldAliasMap, names);
+
         int pos = 1;
         for (JsonNode field : fieldsNode) {
-            String fieldName = JsonHelper.getRequiredString(field, "name", "No field name");
-            String fieldDoc = JsonHelper.getOptionalString(field, "doc");
-            JsonNode fieldTypeNode = field.get("type");
-            if (null == fieldTypeNode) {
-                throw new SchemaParseException("No field type " + field);
-            }
-            if (fieldTypeNode.isTextual()) {
+            String fieldName = JsonHelper.getRequiredString(field, "name", "Field node has no name field");
+            Field f = createFiled(field, pos++, names);
 
-            }
-            Schema fieldSchema = parse(fieldTypeNode, names);
-            Field.SortOrder order = Field.SortOrder.ASCENDING;
-            JsonNode orderNode = field.get("order");
-            if (orderNode != null)
-                order = Field.SortOrder.valueOf(orderNode.getTextValue().toUpperCase());
-            JsonNode defaultValue = field.get("default");
-            if (defaultValue != null
-                    && (SchemaType.FLOAT.equals(fieldSchema.getType())
-                    || (SchemaType.DOUBLE.equals(fieldSchema.getType())))
-                    && defaultValue.isTextual()) {
-                defaultValue = new DoubleNode(Double.valueOf(defaultValue.getTextValue()));
-            }
-            Set<String> fieldAliases = getAliases(field);
-            Field f = new Field(fieldSchema, fieldName, fieldAliases, pos++,
-                    fieldDoc, defaultValue, order, props);
             fieldList.add(f);
+            addToFieldMap(fieldMap, fieldName, f);
+            addToFieldMap(fieldAliasMap, fieldName, f);
+            if (f.getAliases() != null && f.getAliases().size() > 0) {
+                for (String alias : f.getAliases()) {
+                    addToFieldMap(fieldAliasMap, alias, f);
+                }
+            }
         }
 
-        return new RecordSchema(name, doc, aliases, props, fieldList);
+        return result;
     }
 
     // Add one field to the field map
@@ -103,6 +82,35 @@ public class RecordSchema extends NamedSchema implements Iterable<Field> {
             throw new SchemaParseException("field or alias " + name + " is a duplicate name");
         }
         map.put(lowerCaseName, field);
+    }
+
+    /**
+     * Create Record field.
+     */
+    private static Field createFiled(JsonNode field, int pos, SchemaNames names) {
+        String fieldName = JsonHelper.getRequiredString(field, "name", "No field name");
+        String fieldDoc = JsonHelper.getOptionalString(field, "doc");
+        JsonNode fieldTypeNode = field.get("type");
+        if (null == fieldTypeNode) {
+            throw new SchemaParseException("No field type " + field);
+        }
+
+        Schema fieldSchema = parse(fieldTypeNode, names);
+        Field.SortOrder order = Field.SortOrder.ASCENDING;
+        JsonNode orderNode = field.get("order");
+        if (orderNode != null)
+            order = Field.SortOrder.valueOf(orderNode.getTextValue().toUpperCase());
+        JsonNode defaultValue = field.get("default");
+        if (defaultValue != null
+                && (SchemaType.FLOAT.equals(fieldSchema.getType())
+                || (SchemaType.DOUBLE.equals(fieldSchema.getType())))
+                && defaultValue.isTextual()) {
+            defaultValue = new DoubleNode(Double.valueOf(defaultValue.getTextValue()));
+        }
+        Set<String> fieldAliases = getAliases(field);
+        PropertyMap props = JsonHelper.getProperties(field);
+        return new Field(fieldSchema, fieldName, fieldAliases, pos,
+                fieldDoc, defaultValue, order, props);
     }
 
     /**
@@ -127,6 +135,13 @@ public class RecordSchema extends NamedSchema implements Iterable<Field> {
             throw new IllegalArgumentException("name cannot be null");
         }
         return fieldLookup.get(name.toLowerCase());
+    }
+
+    public Field getFieldByAlias(String alias) {
+        if (!StringUtils.hasLength(alias)) {
+            throw new IllegalArgumentException("name cannot be null");
+        }
+        return fieldAliasLookup.get(alias.toLowerCase());
     }
 
     @Override

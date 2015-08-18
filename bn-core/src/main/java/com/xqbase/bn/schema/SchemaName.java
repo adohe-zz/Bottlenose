@@ -16,7 +16,7 @@ public class SchemaName {
     private final String fullName;
 
     public SchemaName(String name, String namespace) {
-        if (name == null) {                         // anonymous
+        if (null == name) {                         // anonymous
             this.name = this.namespace = this.fullName = null;
             return;
         }
@@ -30,7 +30,7 @@ public class SchemaName {
         if ("".equals(namespace))
             namespace = null;
         this.namespace = namespace;
-        this.fullName = (this.namespace == null) ? this.name : this.namespace + "." + this.name;
+        this.fullName = (null == this.namespace) ? this.name : this.namespace + "." + this.name;
     }
 
     public String getName() {
