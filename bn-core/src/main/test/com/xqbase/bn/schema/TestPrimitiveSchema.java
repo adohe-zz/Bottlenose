@@ -47,7 +47,6 @@ public class TestPrimitiveSchema extends SchemaTestBase {
         Assert.assertEquals(type, sc.getType());
 
         testEquality(schema, sc);
-        System.out.println("schema: " + schema);
         testToString(sc);
     }
 }

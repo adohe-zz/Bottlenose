@@ -1,8 +1,10 @@
 package com.xqbase.bn.schema;
 
 import com.xqbase.bn.util.ObjectUtil;
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -113,5 +115,16 @@ public class EnumSchema extends NamedSchema implements Iterable<String> {
     @Override
     public Iterator<String> iterator() {
         return symbols.iterator();
+    }
+
+    @Override
+    protected void writeJsonFields(JsonGenerator gen, SchemaNames names) throws IOException {
+        super.writeJsonFields(gen, names);
+        gen.writeFieldName("symbols");
+        gen.writeStartArray();
+        for (String symbol : symbols) {
+            gen.writeString(symbol);
+        }
+        gen.writeEndArray();
     }
 }
