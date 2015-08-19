@@ -1,9 +1,14 @@
 package com.xqbase.bn.rpc.server.dispatcher;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
- * Created by tonyhe on 15-8-12.
+ * DispatcherServlet Interface.
+ *
+ * @author Tony He
  */
 public interface ServiceDispatcher {
 
-
+    void doDispatch(HttpServletRequest req, HttpServletResponse resp) throws Exception;
 }
