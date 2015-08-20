@@ -1,9 +1,11 @@
 package com.xqbase.bn.schema;
 
 import com.xqbase.bn.exceptions.BaijiRuntimeException;
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -60,6 +62,12 @@ public class PropertyMap extends HashMap<String, String> {
             if (!containsKey(key)) {
                 put(key, value.isTextual() ? value.getTextValue() : value.asText());
             }
+        }
+    }
+
+    protected void writeJSON(JsonGenerator gen) throws IOException {
+        for (Map.Entry<String, String> entry : entrySet()) {
+            gen.writeObjectField(entry.getKey(), entry.getValue());
         }
     }
 }

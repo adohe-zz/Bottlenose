@@ -2,9 +2,11 @@ package com.xqbase.bn.schema;
 
 import com.xqbase.bn.common.util.StringUtils;
 import com.xqbase.bn.util.ObjectUtil;
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.DoubleNode;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -149,6 +151,21 @@ public class RecordSchema extends NamedSchema implements Iterable<Field> {
             throw new IllegalArgumentException("name cannot be null");
         }
         return fieldAliasLookup.get(alias.toLowerCase());
+    }
+
+    @Override
+    protected void writeJsonFields(JsonGenerator gen, SchemaNames names) throws IOException {
+        super.writeJsonFields(gen, names);
+
+        gen.writeFieldName("fields");
+        gen.writeStartArray();
+
+        if (fields != null && fields.size() > 0) {
+            for (Field field : fields) {
+                field.writeJSON(gen, names);
+            }
+        }
+        gen.writeEndArray();
     }
 
     @Override

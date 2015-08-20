@@ -1,7 +1,10 @@
 package com.xqbase.bn.schema;
 
 import com.xqbase.bn.common.util.StringUtils;
+import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
+
+import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -97,4 +100,39 @@ public class Field {
     }
 
     public JsonNode getDefaultValue() { return defaultValue; }
+
+    /**
+     * Write field in JSON Format.
+     */
+    protected void writeJSON(JsonGenerator writer, SchemaNames names) throws IOException {
+        writer.writeStartObject();
+        JsonHelper.writeIfNotNullOrEmpty(writer, "name", name);
+        JsonHelper.writeIfNotNullOrEmpty(writer, "doc", doc);
+
+        if (defaultValue != null) {
+            writer.writeFieldName("default");
+            writer.writeTree(defaultValue);
+        }
+
+        if (ordering != null) {
+            writer.writeStringField("order", ordering.name);
+        }
+
+        writer.writeFieldName("type");
+        schema.writeJSON(writer, names);
+
+        if (props != null) {
+            props.writeJSON(writer);
+        }
+
+        if (aliases != null && aliases.size() > 0) {
+            writer.writeFieldName("aliases");
+            writer.writeStartArray();
+            for (String alias : aliases) {
+                writer.writeString(alias);
+            }
+            writer.writeEndArray();
+        }
+        writer.writeEndObject();
+    }
 }
